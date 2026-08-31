@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Góc Học Tập Cá Nhân</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Kho Bài Học & Tài Liệu Cá Nhân</h1>
+    </header>
+
+    <main class="container">
+        <section class="video-container">
+            <iframe id="main-player" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
+            <h2 id="video-title">Bài 1: Giới thiệu khóa học</h2>
+            <div class="notes">
+                <h3>Ghi chú bài học:</h3>
+                <p id="video-desc">Nội dung tóm tắt kiến thức trọng tâm...</p>
+            </div>
+        </section>
+
+        <aside class="playlist">
+            <h3>Danh Sách Bài Học</h3>
+            <ul id="lesson-list">
+                <li class="active" onclick="changeVideo('dQw4w9WgXcQ', 'Bài 1: Giới thiệu', 'Nội dung ghi chú bài 1...')">Bài 1: Giới thiệu</li>
+                <li onclick="changeVideo('dQw4w9WgXcQ', 'Bài 2: Kiến thức cơ bản', 'Nội dung ghi chú bài 2...')">Bài 2: Kiến thức cơ bản</li>
+            </ul>
+        </aside>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
