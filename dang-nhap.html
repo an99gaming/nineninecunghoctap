@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập & Đăng ký - Góc Học Tập</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="modal-box" style="margin: 50px auto; max-width: 450px; display: block;">
+        <div class="auth-header">
+            <h2 id="modal-title">Đăng nhập</h2>
+            <a href="/" class="back-home">← Trang chủ</a>
+        </div>
+
+        <!-- Tab Chuyển Đổi -->
+        <div class="tab-header">
+            <button id="tab-login-btn" class="tab-btn active" onclick="switchTab('login')">Đăng nhập</button>
+            <button id="tab-register-btn" class="tab-btn" onclick="switchTab('register')">Đăng ký</button>
+        </div>
+
+        <p id="modal-subtitle" class="modal-subtitle">Chào mừng bạn quay lại! Tiếp tục lộ trình luyện thi của mình.</p>
+
+        <!-- Form Đăng Nhập -->
+        <form id="login-form" class="auth-form" onsubmit="handleAuth(event, 'login')">
+            <div class="form-group">
+                <label>Email</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">✉️</span>
+                    <input type="email" id="login-email" required placeholder="nhapemail@gmail.com">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Mật khẩu</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="login-pass" required placeholder="••••••••">
+                    <span class="eye-icon" onclick="togglePasswordVisibility('login-pass', this)">👁️</span>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn green-btn">Đăng nhập</button>
+
+            <div class="divider"><span>hoặc</span></div>
+
+            <button type="button" class="btn-google" onclick="loginWithGoogle()">
+                Đăng nhập với Google
+            </button>
+        </form>
+
+        <!-- Form Đăng Ký -->
+        <form id="register-form" class="auth-form hidden" onsubmit="handleAuth(event, 'register')">
+            <div class="form-group">
+                <label>Họ và tên</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">👤</span>
+                    <input type="text" id="register-fullname" required placeholder="Nguyễn Văn A">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">✉️</span>
+                    <input type="email" id="register-email" required placeholder="email@gmail.com">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Mật khẩu</label>
+                <div class="input-wrapper">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="register-pass" minlength="6" required placeholder="Tạo mật khẩu">
+                    <span class="eye-icon" onclick="togglePasswordVisibility('register-pass', this)">👁️</span>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn green-btn">Tạo tài khoản</button>
+        </form>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
