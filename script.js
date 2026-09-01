@@ -6,10 +6,11 @@ import {
     signInWithPopup, 
     GoogleAuthProvider, 
     onAuthStateChanged, 
-    signOut 
+    signOut,
+    updateProfile 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-// Thông số kết nối chuẩn từ Firebase (Giữ nguyên đúng chữ hoa/chữ thường)
+// Thông số kết nối Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCt8Qzt5CgSl1N7KFOBiB2f_Yl_VTKCH-w",
   authDomain: "web-nine-nien-hoc-tap.firebaseapp.com",
@@ -26,21 +27,29 @@ const googleProvider = new GoogleAuthProvider();
 
 const ADMIN_EMAIL = "hipomcvn@gmail.com";
 
+// Thay đổi Video bài học
 window.changeVideo = function(videoId, title, desc) {
     document.getElementById('main-player').src = "https://www.youtube.com/embed/" + videoId;
     document.getElementById('video-title').innerText = title;
     document.getElementById('video-desc').innerText = desc;
 };
 
+// Quản lý Modal Popup
 window.openModal = function(tab) {
-    document.getElementById('authModal').classList.add('active');
-    document.getElementById('authModal').style.display = 'flex';
-    window.switchTab(tab);
+    const modal = document.getElementById('authModal');
+    if (modal) {
+        modal.classList.add('active');
+        modal.style.display = 'flex';
+        window.switchTab(tab);
+    }
 };
 
 window.closeModal = function() {
-    document.getElementById('authModal').classList.remove('active');
-    document.getElementById('authModal').style.display = 'none';
+    const modal = document.getElementById('authModal');
+    if (modal) {
+        modal.classList.remove('active');
+        modal.style.display = 'none';
+    }
 };
 
 window.closeModalOnOverlay = function(event) {
@@ -49,7 +58,7 @@ window.closeModalOnOverlay = function(event) {
     }
 };
 
-// Chuyển đổi Tab Đăng nhập / Đăng ký & Cập nhật tiêu đề, mô tả
+// Chuyển đổi Tab Đăng nhập / Đăng ký
 window.switchTab = function(tab) {
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
@@ -59,17 +68,17 @@ window.switchTab = function(tab) {
     const modalSubtitle = document.getElementById('modal-subtitle');
 
     if (tab === 'login') {
-        loginForm.classList.remove('hidden');
-        registerForm.classList.add('hidden');
-        loginBtn.classList.add('active');
-        registerBtn.classList.remove('active');
+        if (loginForm) loginForm.classList.remove('hidden');
+        if (registerForm) registerForm.classList.add('hidden');
+        if (loginBtn) loginBtn.classList.add('active');
+        if (registerBtn) registerBtn.classList.remove('active');
         if (modalTitle) modalTitle.innerText = 'Đăng nhập';
         if (modalSubtitle) modalSubtitle.innerText = 'Chào mừng bạn quay lại! Tiếp tục lộ trình luyện thi của mình.';
     } else {
-        loginForm.classList.add('hidden');
-        registerForm.classList.remove('hidden');
-        registerBtn.classList.add('active');
-        loginBtn.classList.remove('active');
+        if (loginForm) loginForm.classList.add('hidden');
+        if (registerForm) registerForm.classList.remove('hidden');
+        if (registerBtn) registerBtn.classList.add('active');
+        if (loginBtn) loginBtn.classList.remove('active');
         if (modalTitle) modalTitle.innerText = 'Đăng ký';
         if (modalSubtitle) modalSubtitle.innerText = 'Tạo tài khoản để bắt đầu luyện thi và tham gia xếp hạng.';
     }
@@ -94,6 +103,7 @@ window.handleAuth = async function(event, type) {
     event.preventDefault();
     
     if (type === 'register') {
+        const fullname = document.getElementById('register-fullname').value;
         const email = document.getElementById('register-email').value;
         const pass = document.getElementById('register-pass').value;
         const confirmPass = document.getElementById('register-confirm-pass') ? document.getElementById('register-confirm-pass').value : pass;
@@ -104,7 +114,11 @@ window.handleAuth = async function(event, type) {
         }
 
         try {
-            await createUserWithEmailAndPassword(auth, email, pass);
+            const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+            // Cập nhật Họ và tên vào hồ sơ tài khoản Firebase
+            if (fullname) {
+                await updateProfile(userCredential.user, { displayName: fullname });
+            }
             alert("Tạo tài khoản thành công!");
             window.closeModal();
         } catch (error) {
@@ -123,6 +137,7 @@ window.handleAuth = async function(event, type) {
     }
 };
 
+// Đăng nhập Google
 window.loginWithGoogle = async function() {
     try {
         await signInWithPopup(auth, googleProvider);
@@ -133,12 +148,14 @@ window.loginWithGoogle = async function() {
     }
 };
 
+// Đăng xuất
 window.logout = function() {
     signOut(auth).then(() => {
         alert("Đã đăng xuất.");
     });
 };
 
+// Theo dõi trạng thái Đăng nhập
 onAuthStateChanged(auth, (user) => {
     const userDisplay = document.getElementById('user-display');
     const authBtns = document.getElementById('auth-btns');
@@ -146,14 +163,15 @@ onAuthStateChanged(auth, (user) => {
     const adminBadge = document.getElementById('admin-badge');
 
     if (user) {
+        const displayName = user.displayName || user.email;
         if (authBtns) authBtns.style.display = 'none';
         if (logoutBtn) logoutBtn.style.display = 'inline-block';
         
         if (user.email === ADMIN_EMAIL) {
-            if (userDisplay) userDisplay.innerText = `Admin: ${user.email}`;
+            if (userDisplay) userDisplay.innerText = `Admin: ${displayName}`;
             if (adminBadge) adminBadge.style.display = 'inline-block';
         } else {
-            if (userDisplay) userDisplay.innerText = `Chào: ${user.email}`;
+            if (userDisplay) userDisplay.innerText = `Chào: ${displayName}`;
             if (adminBadge) adminBadge.style.display = 'none';
         }
     } else {
