@@ -10,7 +10,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCt8Qzt5CgSl1N7KFObiB2f_yl_VTKCh-w",
+ apiKey: "AIzaSyCt8Qzt5CgSl1N7KFObiB2f_yl_vtkch-w",
   authDomain: "web-nine-nien-hoc-tap.firebaseapp.com",
   projectId: "web-nine-nien-hoc-tap",
   storageBucket: "web-nine-nien-hoc-tap.firebasestorage.app",
