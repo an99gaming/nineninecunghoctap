@@ -8,11 +8,12 @@
 </head>
 <body>
 
-    <!-- Thanh Header Navigation -->
+    <!-- Header Navigation -->
     <header class="navbar">
         <div class="logo">
             <span class="logo-icon">📚</span>
             <span class="logo-text">Góc Học Tập</span>
+            <span id="admin-badge" class="badge badge-hot" style="display: none; position: static; margin-left: 8px;">ADMIN</span>
         </div>
 
         <nav class="nav-links">
@@ -25,13 +26,16 @@
             <a href="#" class="has-badge">Lớp của tôi <span class="badge badge-vip">👑</span></a>
         </nav>
 
-        <div class="auth-buttons">
+        <div id="user-display" style="font-weight: bold; color: #00a651; margin-right: 10px;"></div>
+
+        <div id="auth-btns" class="auth-buttons">
             <button class="btn btn-primary" onclick="openModal('register')">Đăng ký học</button>
             <button class="btn btn-outline" onclick="openModal('login')">➜ Đăng nhập</button>
         </div>
+        <button id="logout-btn" class="btn btn-outline" style="display: none;" onclick="logout()">Đăng xuất</button>
     </header>
 
-    <!-- Nội dung chính -->
+    <!-- Main Content -->
     <main class="container">
         <section class="video-container">
             <iframe id="main-player" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
@@ -51,49 +55,50 @@
         </aside>
     </main>
 
-    <!-- CỬA SỔ BẬT LÊN (MODAL LOG IN / REGISTER) -->
+    <!-- Modal Popup -->
     <div id="authModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
         <div class="modal-box">
             <span class="close-btn" onclick="closeModal()">&times;</span>
             
-            <!-- Tab Chuyển đổi Đăng nhập / Đăng ký -->
             <div class="tab-header">
                 <button id="tab-login-btn" class="tab-btn active" onclick="switchTab('login')">Đăng nhập</button>
                 <button id="tab-register-btn" class="tab-btn" onclick="switchTab('register')">Đăng ký</button>
             </div>
 
             <!-- Form Đăng Nhập -->
-            <form id="login-form" class="auth-form" onsubmit="handleAuth(event, 'Đăng nhập')">
+            <form id="login-form" class="auth-form" onsubmit="handleAuth(event, 'login')">
                 <div class="form-group">
-                    <label>Tên đăng nhập hoặc Email</label>
-                    <input type="text" required placeholder="Nhập email hoặc tên tài khoản">
+                    <label>Địa chỉ Email</label>
+                    <input type="email" id="login-email" required placeholder="Nhập email của bạn">
                 </div>
                 <div class="form-group">
                     <label>Mật khẩu</label>
-                    <input type="password" required placeholder="Nhập mật khẩu">
+                    <input type="password" id="login-pass" required placeholder="Nhập mật khẩu">
                 </div>
                 <button type="submit" class="submit-btn">Đăng nhập</button>
+                
+                <div style="margin-top: 15px; text-align: center;">
+                    <p style="font-size: 13px; color: #666; margin-bottom: 8px;">Hoặc đăng nhập bằng</p>
+                    <button type="button" class="btn btn-outline" style="width: 100%; font-weight: bold;" onclick="loginWithGoogle()">🌐 Đăng nhập bằng Google</button>
+                </div>
             </form>
 
             <!-- Form Đăng Ký -->
-            <form id="register-form" class="auth-form hidden" onsubmit="handleAuth(event, 'Đăng ký')">
-                <div class="form-group">
-                    <label>Họ và tên</label>
-                    <input type="text" required placeholder="Nhập họ và tên của bạn">
-                </div>
+            <form id="register-form" class="auth-form hidden" onsubmit="handleAuth(event, 'register')">
                 <div class="form-group">
                     <label>Địa chỉ Email</label>
-                    <input type="email" required placeholder="VD: user@gmail.com">
+                    <input type="email" id="register-email" required placeholder="VD: user@gmail.com">
                 </div>
                 <div class="form-group">
-                    <label>Mật khẩu</label>
-                    <input type="password" required placeholder="Tạo mật khẩu mạnh">
+                    <label>Mật khẩu (Tối thiểu 6 ký tự)</label>
+                    <input type="password" id="register-pass" minlength="6" required placeholder="Tạo mật khẩu">
                 </div>
                 <button type="submit" class="submit-btn green-btn">Tạo tài khoản</button>
             </form>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- Nhúng Firebase SDK & File Script chính -->
+    <script type="module" src="script.js"></script>
 </body>
 </html>
