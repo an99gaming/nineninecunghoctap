@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/dang-nhap",
+      "destination": "/dang-nhap.html"
+    }
+  ]
+}
