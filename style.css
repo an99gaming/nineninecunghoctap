@@ -170,21 +170,34 @@ iframe {
     align-items: center;
 }
 
+.modal-overlay.active {
+    display: flex !important;
+}
+
 .modal-box {
     background: #ffffff;
-    width: 400px;
+    width: 420px;
     max-width: 90%;
     padding: 25px 30px;
     border-radius: 16px;
     position: relative;
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    animation: fadeIn 0.3s ease;
+    animation: fadeIn 0.25s ease-out;
     max-height: 90vh;
     overflow-y: auto;
 }
 
+/* Tùy chỉnh thanh cuộn cho Modal */
+.modal-box::-webkit-scrollbar {
+    width: 6px;
+}
+.modal-box::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
 @keyframes fadeIn {
-    from { transform: translateY(-20px); opacity: 0; }
+    from { transform: translateY(-15px); opacity: 0; }
     to { transform: translateY(0); opacity: 1; }
 }
 
@@ -243,6 +256,7 @@ iframe {
     color: #888;
     cursor: pointer;
     transition: all 0.2s;
+    border-bottom: 3px solid transparent;
 }
 
 .tab-btn.active {
@@ -288,6 +302,7 @@ iframe {
     font-size: 14px;
     color: #888;
     pointer-events: none;
+    z-index: 2;
 }
 
 .eye-icon {
@@ -296,11 +311,12 @@ iframe {
     font-size: 14px;
     cursor: pointer;
     user-select: none;
+    z-index: 2;
 }
 
 .form-group input {
     width: 100%;
-    padding: 10px 36px 10px 36px;
+    padding: 10px 38px 10px 38px;
     border: 1px solid #ddd;
     border-radius: 8px;
     font-size: 14px;
