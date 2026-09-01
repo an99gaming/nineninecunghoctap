@@ -9,7 +9,6 @@ import {
     signOut 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-// Cấu hình Firebase chuẩn xác
 const firebaseConfig = {
   apiKey: "AIzaSyCt8Qzt5CgSl1N7KFObiB2f_Yl_VTKCh-w",
   authDomain: "web-nine-nien-hoc-tap.firebaseapp.com",
@@ -20,22 +19,18 @@ const firebaseConfig = {
   measurementId: "G-NVY7S1F6X6"
 };
 
-// Khởi tạo Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
-// Tài khoản Admin
 const ADMIN_EMAIL = "hipomcvn@gmail.com";
 
-// Chuyển Video Playlist
 window.changeVideo = function(videoId, title, desc) {
     document.getElementById('main-player').src = "https://www.youtube.com/embed/" + videoId;
     document.getElementById('video-title').innerText = title;
     document.getElementById('video-desc').innerText = desc;
 };
 
-// Điều khiển Modal Pop-up
 window.openModal = function(tab) {
     document.getElementById('authModal').style.display = 'flex';
     window.switchTab(tab);
@@ -70,7 +65,6 @@ window.switchTab = function(tab) {
     }
 };
 
-// Đăng ký & Đăng nhập Email
 window.handleAuth = async function(event, type) {
     event.preventDefault();
     
@@ -97,7 +91,6 @@ window.handleAuth = async function(event, type) {
     }
 };
 
-// Đăng nhập bằng Google
 window.loginWithGoogle = async function() {
     try {
         await signInWithPopup(auth, googleProvider);
@@ -108,14 +101,12 @@ window.loginWithGoogle = async function() {
     }
 };
 
-// Đăng xuất
 window.logout = function() {
     signOut(auth).then(() => {
         alert("Đã đăng xuất.");
     });
 };
 
-// Nhận diện trạng thái Đăng nhập & Quyền Admin
 onAuthStateChanged(auth, (user) => {
     const userDisplay = document.getElementById('user-display');
     const authBtns = document.getElementById('auth-btns');
