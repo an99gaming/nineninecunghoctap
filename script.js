@@ -9,7 +9,7 @@ import {
     signOut 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-// Thông số kết nối Firebase chính xác
+// Cấu hình Firebase chuẩn xác
 const firebaseConfig = {
   apiKey: "AIzaSyCt8Qzt5CgSl1N7KFObiB2f_Yl_VTKCh-w",
   authDomain: "web-nine-nien-hoc-tap.firebaseapp.com",
@@ -25,10 +25,10 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
-// Tài khoản Admin duy nhất
+// Tài khoản Admin
 const ADMIN_EMAIL = "hipomcvn@gmail.com";
 
-// Điều khiển Playlist Video
+// Chuyển Video Playlist
 window.changeVideo = function(videoId, title, desc) {
     document.getElementById('main-player').src = "https://www.youtube.com/embed/" + videoId;
     document.getElementById('video-title').innerText = title;
@@ -70,7 +70,7 @@ window.switchTab = function(tab) {
     }
 };
 
-// Đăng ký / Đăng nhập bằng Email & Mật khẩu
+// Đăng ký & Đăng nhập Email
 window.handleAuth = async function(event, type) {
     event.preventDefault();
     
@@ -92,7 +92,7 @@ window.handleAuth = async function(event, type) {
             alert("Đăng nhập thành công!");
             window.closeModal();
         } catch (error) {
-            alert("Sai email hoặc mật khẩu!");
+            alert("Lỗi đăng nhập: " + error.message);
         }
     }
 };
@@ -115,7 +115,7 @@ window.logout = function() {
     });
 };
 
-// Lắng nghe trạng thái Đăng nhập & Phân quyền Admin
+// Nhận diện trạng thái Đăng nhập & Quyền Admin
 onAuthStateChanged(auth, (user) => {
     const userDisplay = document.getElementById('user-display');
     const authBtns = document.getElementById('auth-btns');
