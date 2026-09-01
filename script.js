@@ -9,7 +9,7 @@ import {
     signOut 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-// Thông số kết nối lấy trực tiếp từ Firebase Console của bạn
+// Thông số kết nối Firebase chính xác
 const firebaseConfig = {
   apiKey: "AIzaSyCt8Qzt5CgSl1N7KFObiB2f_Yl_VTKCh-w",
   authDomain: "web-nine-nien-hoc-tap.firebaseapp.com",
@@ -25,17 +25,17 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
-// ĐIỀU CHỈNH EMAIL ADMIN CỦA BẠN TẠI ĐÂY
+// Tài khoản Admin duy nhất
 const ADMIN_EMAIL = "hipomcvn@gmail.com";
 
-// Chuyển video playlist
+// Điều khiển Playlist Video
 window.changeVideo = function(videoId, title, desc) {
     document.getElementById('main-player').src = "https://www.youtube.com/embed/" + videoId;
     document.getElementById('video-title').innerText = title;
     document.getElementById('video-desc').innerText = desc;
 };
 
-// Modal Controls
+// Điều khiển Modal Pop-up
 window.openModal = function(tab) {
     document.getElementById('authModal').style.display = 'flex';
     window.switchTab(tab);
@@ -70,7 +70,7 @@ window.switchTab = function(tab) {
     }
 };
 
-// Xử lý Đăng ký / Đăng nhập Email & Password
+// Đăng ký / Đăng nhập bằng Email & Mật khẩu
 window.handleAuth = async function(event, type) {
     event.preventDefault();
     
@@ -115,7 +115,7 @@ window.logout = function() {
     });
 };
 
-// Lắng nghe trạng thái người dùng (Tự động nhận diện Admin / User)
+// Lắng nghe trạng thái Đăng nhập & Phân quyền Admin
 onAuthStateChanged(auth, (user) => {
     const userDisplay = document.getElementById('user-display');
     const authBtns = document.getElementById('auth-btns');
@@ -126,7 +126,6 @@ onAuthStateChanged(auth, (user) => {
         authBtns.style.display = 'none';
         logoutBtn.style.display = 'inline-block';
         
-        // Kiểm tra nếu là Email Admin
         if (user.email === ADMIN_EMAIL) {
             userDisplay.innerText = `Admin: ${user.email}`;
             adminBadge.style.display = 'inline-block';
