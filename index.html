@@ -1,226 +1,104 @@
 <!DOCTYPE html>
-
 <html lang="vi">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Góc Học Tập Cá Nhân</title>
-
-    <link rel="stylesheet" href="style.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Góc Học Tập Cá Nhân</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-
-
-    <!-- Header Navigation -->
-
-    <header class="navbar">
-
-        <div class="logo">
-
-            <span class="logo-icon">📚</span>
-
-            <span class="logo-text">Góc Học Tập</span>
-
-            <span id="admin-badge" class="badge badge-hot" style="display: none; position: static; margin-left: 8px;">ADMIN</span>
-
-        </div>
-
-
-
-        <nav class="nav-links">
-
-            <a href="#">Trang chủ</a>
-
-            <a href="#">Khóa học</a>
-
-            <a href="#" class="has-badge">Thi thử <span class="badge badge-hot">HOT</span></a>
-
-            <a href="#">Tài liệu</a>
-
-            <a href="#">Tin tức ▾</a>
-
-            <a href="#">Cộng đồng</a>
-
-            <a href="#" class="has-badge">Lớp của tôi <span class="badge badge-vip">👑</span></a>
-
-        </nav>
-
-
-
-        <div id="user-display" style="font-weight: bold; color: #00a651; margin-right: 10px;"></div>
-
-
-<div id="auth-btns" class="auth-buttons">
-    <a href="/dang-nhap" class="btn btn-outline">➜ Đăng nhập</a>
-    <a href="/dang-nhap" class="btn btn-primary">Đăng ký học</a>
-</div>
-
-        <button id="logout-btn" class="btn btn-outline" style="display: none;" onclick="logout()">Đăng xuất</button>
-
-    </header>
-
-
-
-    <!-- Main Content -->
-
-    <main class="container">
-
-        <section class="video-container">
-
-            <iframe id="main-player" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
-
-            <h2 id="video-title">Bài 1: Giới thiệu khóa học</h2>
-
-            <div class="notes">
-
-                <h3>Ghi chú bài học:</h3>
-
-                <p id="video-desc">Nội dung tóm tắt kiến thức trọng tâm...</p>
-
-            </div>
-
-        </section>
-
-
-
-        <aside class="playlist">
-
-            <h3>Danh Sách Bài Học</h3>
-
-            <ul id="lesson-list">
-
-                <li class="active" onclick="changeVideo('dQw4w9WgXcQ', 'Bài 1: Giới thiệu', 'Nội dung ghi chú bài 1...')">Bài 1: Giới thiệu</li>
-
-                <li onclick="changeVideo('dQw4w9WgXcQ', 'Bài 2: Kiến thức cơ bản', 'Nội dung ghi chú bài 2...')">Bài 2: Kiến thức cơ bản</li>
-
-            </ul>
-
-        </aside>
-
-    </main>
-
-
-<!-- Modal Popup Đăng nhập / Đăng ký Mới -->
-    <div id="authModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
-        <div class="modal-box">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            
-            <div class="auth-header">
-                <h2 id="modal-title">Đăng nhập</h2>
-                <a href="#" class="back-home" onclick="closeModal(); return false;">← Trang chủ</a>
-            </div>
-
-            <!-- Tab Chuyển Đổi -->
-            <div class="tab-header">
-                <button id="tab-login-btn" class="tab-btn active" onclick="switchTab('login')">Đăng nhập</button>
-                <button id="tab-register-btn" class="tab-btn" onclick="switchTab('register')">Đăng ký</button>
-            </div>
-
-            <p id="modal-subtitle" class="modal-subtitle">Chào mừng bạn quay lại! Tiếp tục lộ trình luyện thi của mình.</p>
-
-            <!-- Form Đăng Nhập -->
-            <form id="login-form" class="auth-form" onsubmit="handleAuth(event, 'login')">
-                <div class="form-group">
-                    <label>Email</label>
-                    <div class="input-wrapper">
-                        <span class="input-icon">✉️</span>
-                        <input type="email" id="login-email" required placeholder="hipomcvn@gmail.com">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Mật khẩu</label>
-                    <div class="input-wrapper">
-                        <span class="input-icon">🔒</span>
-                        <input type="password" id="login-pass" required placeholder="••••••••">
-                        <span class="eye-icon" onclick="togglePasswordVisibility('login-pass', this)">👁️</span>
-                    </div>
-                </div>
-
-                <div class="form-options">
-                    <a href="#" class="forgot-link">Quên mật khẩu?</a>
-                </div>
-
-                <button type="submit" class="submit-btn green-btn">Đăng nhập</button>
-
-                <div class="divider">
-                    <span>hoặc</span>
-                </div>
-
-                <button type="button" class="btn-google" onclick="loginWithGoogle()">
-                    <svg class="google-svg" viewBox="0 0 48 48" width="18" height="18">
-                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-                    </svg>
-                    Đăng nhập với Google
-                </button>
-
-                <p class="auth-footer-text">Bạn chưa có tài khoản? <a href="#" onclick="switchTab('register'); return false;">Đăng ký ngay</a></p>
-            </form>
-
-            <!-- Form Đăng Ký (Đã bỏ số điện thoại) -->
-            <form id="register-form" class="auth-form hidden" onsubmit="handleAuth(event, 'register')">
-                <div class="form-group">
-                    <label>Họ và tên</label>
-                    <div class="input-wrapper">
-                        <span class="input-icon">👤</span>
-                        <input type="text" id="register-fullname" required placeholder="Nguyễn Văn A">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Biệt danh <span class="sub-label">(hiển thị trên bảng xếp hạng)</span></label>
-                    <div class="input-wrapper">
-                        <span class="input-icon">🪄</span>
-                        <input type="text" id="register-nickname" placeholder="VD: Đại Thánh">
-                    </div>
-                    <p class="field-hint">Biệt danh dùng để xếp hạng công khai trên các bài thi thử – nên đặt ngắn gọn, dễ nhớ.</p>
-                </div>
-
-                <div class="form-group">
-                    <label>Email</label>
-                    <div class="input-wrapper">
-                        <span class="input-icon">✉️</span>
-                        <input type="email" id="register-email" required placeholder="email@gmail.com">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Mật khẩu</label>
-                    <div class="input-wrapper">
-                        <span class="input-icon">🔒</span>
-                        <input type="password" id="register-pass" minlength="6" required placeholder="Tạo mật khẩu">
-                        <span class="eye-icon" onclick="togglePasswordVisibility('register-pass', this)">👁️</span>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Nhập lại mật khẩu</label>
-                    <div class="input-wrapper">
-                        <span class="input-icon">🔒</span>
-                        <input type="password" id="register-confirm-pass" minlength="6" required placeholder="Nhập lại mật khẩu">
-                        <span class="eye-icon" onclick="togglePasswordVisibility('register-confirm-pass', this)">👁️</span>
-                    </div>
-                </div>
-
-                <button type="submit" class="submit-btn green-btn">Tạo tài khoản</button>
-
-                <p class="auth-footer-text">Bạn đã có tài khoản? <a href="#" onclick="switchTab('login'); return false;">Đăng nhập ngay</a></p>
-            </form>
-        </div>
-    </div>
-    <script type="module" src="script.js"></script>
-
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <div class="logo">
+            <span class="logo-icon">📚</span>
+            <span class="logo-text">Góc Học Tập</span>
+            <span id="admin-badge" class="badge badge-hot" style="display: none; position: static; margin-left: 8px;">ADMIN</span>
+        </div>
+
+        <nav class="nav-links">
+            <a href="#">Trang chủ</a>
+            <a href="#">Khóa học</a>
+            <a href="#" class="has-badge">Thi thử <span class="badge badge-hot">HOT</span></a>
+            <a href="#">Tài liệu</a>
+            <a href="#">Tin tức ▾</a>
+            <a href="#">Cộng đồng</a>
+            <a href="#" class="has-badge">Lớp của tôi <span class="badge badge-vip">👑</span></a>
+        </nav>
+
+        <div id="user-display" style="font-weight: bold; color: #00a651; margin-right: 10px;"></div>
+
+        <div id="auth-btns" class="auth-buttons">
+            <button class="btn btn-primary" onclick="openModal('register')">Đăng ký học</button>
+            <button class="btn btn-outline" onclick="openModal('login')">➜ Đăng nhập</button>
+        </div>
+        <button id="logout-btn" class="btn btn-outline" style="display: none;" onclick="logout()">Đăng xuất</button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <section class="video-container">
+            <iframe id="main-player" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
+            <h2 id="video-title">Bài 1: Giới thiệu khóa học</h2>
+            <div class="notes">
+                <h3>Ghi chú bài học:</h3>
+                <p id="video-desc">Nội dung tóm tắt kiến thức trọng tâm...</p>
+            </div>
+        </section>
+
+        <aside class="playlist">
+            <h3>Danh Sách Bài Học</h3>
+            <ul id="lesson-list">
+                <li class="active" onclick="changeVideo('dQw4w9WgXcQ', 'Bài 1: Giới thiệu', 'Nội dung ghi chú bài 1...')">Bài 1: Giới thiệu</li>
+                <li onclick="changeVideo('dQw4w9WgXcQ', 'Bài 2: Kiến thức cơ bản', 'Nội dung ghi chú bài 2...')">Bài 2: Kiến thức cơ bản</li>
+            </ul>
+        </aside>
+    </main>
+
+    <!-- Modal Popup -->
+    <div id="authModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal-box">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            
+            <div class="tab-header">
+                <button id="tab-login-btn" class="tab-btn active" onclick="switchTab('login')">Đăng nhập</button>
+                <button id="tab-register-btn" class="tab-btn" onclick="switchTab('register')">Đăng ký</button>
+            </div>
+
+            <!-- Form Đăng Nhập -->
+            <form id="login-form" class="auth-form" onsubmit="handleAuth(event, 'login')">
+                <div class="form-group">
+                    <label>Địa chỉ Email</label>
+                    <input type="email" id="login-email" required placeholder="Nhập email của bạn">
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu</label>
+                    <input type="password" id="login-pass" required placeholder="Nhập mật khẩu">
+                </div>
+                <button type="submit" class="submit-btn">Đăng nhập</button>
+                
+                <div style="margin-top: 15px; text-align: center;">
+                    <p style="font-size: 13px; color: #666; margin-bottom: 8px;">Hoặc đăng nhập bằng</p>
+                    <button type="button" class="btn btn-outline" style="width: 100%; font-weight: bold;" onclick="loginWithGoogle()">🌐 Đăng nhập bằng Google</button>
+                </div>
+            </form>
+
+            <!-- Form Đăng Ký -->
+            <form id="register-form" class="auth-form hidden" onsubmit="handleAuth(event, 'register')">
+                <div class="form-group">
+                    <label>Địa chỉ Email</label>
+                    <input type="email" id="register-email" required placeholder="VD: user@gmail.com">
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu (Tối thiểu 6 ký tự)</label>
+                    <input type="password" id="register-pass" minlength="6" required placeholder="Tạo mật khẩu">
+                </div>
+                <button type="submit" class="submit-btn green-btn">Tạo tài khoản</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Nhúng Firebase SDK & File Script chính -->
+    <script type="module" src="script.js"></script>
 </body>
-
-</html> 
-
+</html>
