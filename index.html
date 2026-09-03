@@ -37,7 +37,7 @@
 
     <!-- Main Content -->
     <main class="course-container">
-        <!-- Cột Trái: Video & Thông Tin Bài Học -->
+        <!-- Cột Trái: Video, Sơ Đồ Tư Duy & Bảng Xếp Hạng -->
         <section class="left-content">
             <div class="video-wrapper">
                 <iframe id="main-player" 
@@ -51,11 +51,32 @@
             <div class="lesson-header">
                 <span class="chapter-tag" id="chapter-tag">CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ</span>
                 <h1 id="video-title">Bài 1 - Buổi 1. Thành phần nguyên tử</h1>
-                <p class="view-count">👁️ 25 lượt xem</p>
+                <p class="view-count">👁️ 29 lượt xem</p>
                 
                 <div class="nav-buttons">
                     <button class="btn-nav btn-prev" onclick="prevLesson()">← Bài trước</button>
                     <button class="btn-nav btn-next" onclick="nextLesson()">Bài tiếp theo →</button>
+                </div>
+            </div>
+
+            <!-- Khung Sơ Đồ Tư Duy -->
+            <div class="card-section">
+                <div class="card-title"><span class="icon">🌿</span> Sơ đồ tư duy</div>
+                <div class="mindmap-placeholder">
+                    <span class="node-icon">🔗</span> Sơ đồ tư duy của buổi học sẽ được tải lên tại đây.
+                </div>
+            </div>
+
+            <!-- Khung Bảng Xếp Hạng Chuyên Cần -->
+            <div class="card-section">
+                <div class="card-title"><span class="icon">🏆</span> Bảng xếp hạng chuyên cần</div>
+                
+                <div class="user-rank-banner">
+                    <span class="lightning">⚡</span> Vị trí của bạn: <strong id="my-rank-text">Hạng 2/8</strong> · Cố lên nhé! 💪
+                </div>
+
+                <div id="leaderboard-list" class="leaderboard-list">
+                    <!-- Danh sách xếp hạng render động từ JS -->
                 </div>
             </div>
 
@@ -64,7 +85,7 @@
                 <h3>📑 Tài liệu bài học</h3>
                 <div class="doc-item">
                     <span class="doc-icon">📄</span>
-                    <span id="doc-title" class="doc-name">Bài 1 - Buổi 1 - Thành phần nguyên tử - File đề.pdf</span>
+                    <span id="doc-title" class="doc-name">Bài 1 - Buổi 1. Thành phần nguyên tử - File đề.pdf</span>
                     <a id="doc-link" href="#" class="btn-download" download>📥 Tải về</a>
                 </div>
             </div>
@@ -72,25 +93,23 @@
 
         <!-- Cột Phải: Tiến Độ & Danh Sách Bài Học Accordion -->
         <aside class="right-sidebar">
-            <!-- Khung Tiến Độ Khóa Học -->
             <div class="progress-card">
                 <div class="circle-progress">
-                    <span>0%</span>
+                    <span>8%</span>
                 </div>
                 <div class="progress-info">
                     <h4>Tiến độ khóa học</h4>
-                    <p>Đã học <strong>0/90</strong> bài · còn 90 bài</p>
+                    <p>Đã học <strong>7/90</strong> bài · còn 83 bài</p>
                 </div>
             </div>
 
-            <!-- Danh Sách Chương & Bài Học -->
             <div class="playlist-card">
                 <div class="playlist-header">
                     <h3>📖 Nội dung khóa học</h3>
-                    <span class="total-info">7 chương · 90 bài học</span>
+                    <a href="#" class="expand-all">Mở rộng tất cả</a>
                 </div>
+                <span class="sub-info">7 chương · 90 bài học</span>
 
-                <!-- CHƯƠNG 1 -->
                 <details class="chapter-accordion" open>
                     <summary class="chapter-header">
                         <div class="chapter-badge">01</div>
@@ -102,7 +121,7 @@
                     </summary>
                     <ul class="lesson-list">
                         <li class="lesson-item active" onclick="changeVideo('rBUEpdM8z9k', 'Bài 1 - Buổi 1. Thành phần nguyên tử', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-1.pdf', this)">
-                            <span class="status-icon play">▶</span>
+                            <span class="status-icon completed">✓</span>
                             <div class="lesson-text">
                                 <p>Bài 1 - Buổi 1. Thành phần nguyên tử</p>
                             </div>
@@ -115,6 +134,28 @@
                         </li>
                     </ul>
                 </details>
+
+                <details class="chapter-accordion">
+                    <summary class="chapter-header">
+                        <div class="chapter-badge">02</div>
+                        <div class="chapter-info">
+                            <h4>CHƯƠNG 2: BẢNG TUẦN HOÀN CÁC NGUYÊN TỐ HÓA HỌC</h4>
+                            <span>14 bài học</span>
+                        </div>
+                        <span class="arrow-icon">❯</span>
+                    </summary>
+                </details>
+
+                <details class="chapter-accordion">
+                    <summary class="chapter-header">
+                        <div class="chapter-badge">03</div>
+                        <div class="chapter-info">
+                            <h4>CHƯƠNG 3: LIÊN KẾT HÓA HỌC</h4>
+                            <span>12 bài học</span>
+                        </div>
+                        <span class="arrow-icon">❯</span>
+                    </summary>
+                </details>
             </div>
         </aside>
     </main>
@@ -125,28 +166,20 @@
             <span class="close-btn" onclick="closeModal()">&times;</span>
             <div class="auth-header">
                 <h2 id="modal-title">Đăng nhập</h2>
-                <a href="#" class="back-home" onclick="closeModal(); return false;">← Trang chủ</a>
             </div>
             <div class="tab-header">
                 <button id="tab-login-btn" class="tab-btn active" onclick="switchTab('login')">Đăng nhập</button>
                 <button id="tab-register-btn" class="tab-btn" onclick="switchTab('register')">Đăng ký</button>
             </div>
-            <p id="modal-subtitle" class="modal-subtitle">Chào mừng bạn quay lại!</p>
 
             <form id="login-form" class="auth-form" onsubmit="handleAuth(event, 'login')">
                 <div class="form-group">
                     <label>Email</label>
-                    <div class="input-wrapper">
-                        <span class="input-icon">✉️</span>
-                        <input type="email" id="login-email" required placeholder="nhapemail@gmail.com">
-                    </div>
+                    <input type="email" id="login-email" required placeholder="nhapemail@gmail.com">
                 </div>
                 <div class="form-group">
                     <label>Mật khẩu</label>
-                    <div class="input-wrapper">
-                        <span class="input-icon">🔒</span>
-                        <input type="password" id="login-pass" required placeholder="••••••••">
-                    </div>
+                    <input type="password" id="login-pass" required placeholder="••••••••">
                 </div>
                 <button type="submit" class="submit-btn green-btn">Đăng nhập</button>
             </form>
@@ -154,24 +187,15 @@
             <form id="register-form" class="auth-form hidden" onsubmit="handleAuth(event, 'register')">
                 <div class="form-group">
                     <label>Họ và tên</label>
-                    <div class="input-wrapper">
-                        <span class="input-icon">👤</span>
-                        <input type="text" id="register-fullname" required placeholder="Nguyễn Văn A">
-                    </div>
+                    <input type="text" id="register-fullname" required placeholder="Nguyễn Văn A">
                 </div>
                 <div class="form-group">
                     <label>Email</label>
-                    <div class="input-wrapper">
-                        <span class="input-icon">✉️</span>
-                        <input type="email" id="register-email" required placeholder="email@gmail.com">
-                    </div>
+                    <input type="email" id="register-email" required placeholder="email@gmail.com">
                 </div>
                 <div class="form-group">
                     <label>Mật khẩu</label>
-                    <div class="input-wrapper">
-                        <span class="input-icon">🔒</span>
-                        <input type="password" id="register-pass" minlength="6" required placeholder="Tạo mật khẩu">
-                    </div>
+                    <input type="password" id="register-pass" minlength="6" required placeholder="Tạo mật khẩu">
                 </div>
                 <button type="submit" class="submit-btn green-btn">Tạo tài khoản</button>
             </form>
