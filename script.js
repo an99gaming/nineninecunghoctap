@@ -270,12 +270,19 @@ window.closeModalOnOverlay = function(e) {
 window.switchTab = function(tab) {
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
+    const tabLoginBtn = document.getElementById('tab-login-btn');
+    const tabRegisterBtn = document.getElementById('tab-register-btn');
+
     if (tab === 'login') {
         loginForm?.classList.remove('hidden');
         registerForm?.classList.add('hidden');
+        tabLoginBtn?.classList.add('active');
+        tabRegisterBtn?.classList.remove('active');
     } else {
         loginForm?.classList.add('hidden');
         registerForm?.classList.remove('hidden');
+        tabRegisterBtn?.classList.add('active');
+        tabLoginBtn?.classList.remove('active');
     }
 };
 
