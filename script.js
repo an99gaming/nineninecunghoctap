@@ -27,14 +27,83 @@ const googleProvider = new GoogleAuthProvider();
 
 const ADMIN_EMAIL = "hipomcvn@gmail.com";
 
-// Thay đổi Video bài học
-window.changeVideo = function(videoId, title, desc) {
-    document.getElementById('main-player').src = "https://www.youtube.com/embed/" + videoId;
-    document.getElementById('video-title').innerText = title;
-    document.getElementById('video-desc').innerText = desc;
+// ==========================================
+// THAY ĐỔI VIDEO BÀI HỌC & TÀI LIỆU
+// ==========================================
+window.changeVideo = function(videoId, title, chapterName, docLink, element) {
+    // 1. Cập nhật Player YouTube
+    const player = document.getElementById('main-player');
+    if (player && videoId) {
+        player.src = "https://www.youtube.com/embed/" + videoId + "?autoplay=1";
+    }
+
+    // 2. Cập nhật Tiêu đề bài học & Chương
+    const titleElem = document.getElementById('video-title');
+    if (titleElem && title) titleElem.innerText = title;
+
+    const chapterElem = document.getElementById('chapter-tag');
+    if (chapterElem && chapterName) chapterElem.innerText = chapterName;
+
+    // 3. Cập nhật Tài liệu đính kèm
+    const docTitle = document.getElementById('doc-title');
+    const docBtn = document.getElementById('doc-link');
+    if (docTitle && docBtn) {
+        if (docLink) {
+            docTitle.innerText = `${title} - File đề.pdf`;
+            docBtn.href = docLink;
+            docBtn.style.display = 'inline-flex';
+        } else {
+            docTitle.innerText = 'Chưa có tài liệu đính kèm cho bài học này.';
+            docBtn.style.display = 'none';
+        }
+    }
+
+    // 4. Highlight bài học đang chọn
+    document.querySelectorAll('.lesson-item').forEach(item => {
+        item.classList.remove('active');
+    });
+
+    if (element) {
+        element.classList.add('active');
+    } else if (window.event && window.event.currentTarget) {
+        window.event.currentTarget.classList.add('active');
+    }
 };
 
-// Quản lý Modal Popup
+// ==========================================
+// NÚT BÀI TRƯỚC / BÀI TIẾP THEO
+// ==========================================
+window.nextLesson = function() {
+    const lessons = Array.from(document.querySelectorAll('.lesson-item'));
+    const currentIndex = lessons.findIndex(item => item.classList.contains('active'));
+    
+    if (currentIndex !== -1 && currentIndex < lessons.length - 1) {
+        lessons[currentIndex + 1].click();
+        
+        const parentAccordion = lessons[currentIndex + 1].closest('.chapter-accordion');
+        if (parentAccordion) parentAccordion.open = true;
+    } else {
+        alert("Bạn đã ở bài học cuối cùng!");
+    }
+};
+
+window.prevLesson = function() {
+    const lessons = Array.from(document.querySelectorAll('.lesson-item'));
+    const currentIndex = lessons.findIndex(item => item.classList.contains('active'));
+    
+    if (currentIndex > 0) {
+        lessons[currentIndex - 1].click();
+        
+        const parentAccordion = lessons[currentIndex - 1].closest('.chapter-accordion');
+        if (parentAccordion) parentAccordion.open = true;
+    } else {
+        alert("Bạn đang ở bài học đầu tiên!");
+    }
+};
+
+// ==========================================
+// QUẢN LÝ MODAL POPUP
+// ==========================================
 window.openModal = function(tab) {
     const modal = document.getElementById('authModal');
     if (modal) {
@@ -58,7 +127,6 @@ window.closeModalOnOverlay = function(event) {
     }
 };
 
-// Chuyển đổi Tab Đăng nhập / Đăng ký
 window.switchTab = function(tab) {
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
@@ -84,7 +152,6 @@ window.switchTab = function(tab) {
     }
 };
 
-// Tính năng Ẩn / Hiện Mật Khẩu
 window.togglePasswordVisibility = function(inputId, iconElement) {
     const input = document.getElementById(inputId);
     if (input) {
@@ -98,7 +165,9 @@ window.togglePasswordVisibility = function(inputId, iconElement) {
     }
 };
 
-// Xử lý Đăng Nhập & Đăng Ký với Firebase
+// ==========================================
+// XỬ LÝ AUTHENTICATION FIREBASE
+// ==========================================
 window.handleAuth = async function(event, type) {
     event.preventDefault();
     
@@ -115,7 +184,6 @@ window.handleAuth = async function(event, type) {
 
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-            // Cập nhật Họ và tên vào hồ sơ tài khoản Firebase
             if (fullname) {
                 await updateProfile(userCredential.user, { displayName: fullname });
             }
@@ -137,7 +205,6 @@ window.handleAuth = async function(event, type) {
     }
 };
 
-// Đăng nhập Google
 window.loginWithGoogle = async function() {
     try {
         await signInWithPopup(auth, googleProvider);
@@ -148,14 +215,12 @@ window.loginWithGoogle = async function() {
     }
 };
 
-// Đăng xuất
 window.logout = function() {
     signOut(auth).then(() => {
         alert("Đã đăng xuất.");
     });
 };
 
-// Theo dõi trạng thái Đăng nhập
 onAuthStateChanged(auth, (user) => {
     const userDisplay = document.getElementById('user-display');
     const authBtns = document.getElementById('auth-btns');
