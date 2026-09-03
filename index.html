@@ -183,6 +183,13 @@
                     <input type="password" id="login-pass" required placeholder="••••••••">
                 </div>
                 <button type="submit" class="submit-btn green-btn">Đăng nhập</button>
+
+                <!-- Thêm nút Đăng nhập bằng Google -->
+                <div class="divider"><span>hoặc</span></div>
+                <button type="button" class="google-btn" onclick="loginWithGoogle()">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                    Đăng nhập bằng Google
+                </button>
             </form>
 
             <!-- Form Đăng ký -->
@@ -200,6 +207,13 @@
                     <input type="password" id="register-pass" minlength="6" required placeholder="Tạo mật khẩu">
                 </div>
                 <button type="submit" class="submit-btn green-btn">Tạo tài khoản</button>
+
+                <!-- Thêm nút Đăng ký bằng Google -->
+                <div class="divider"><span>hoặc</span></div>
+                <button type="button" class="google-btn" onclick="loginWithGoogle()">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                    Đăng ký bằng Google
+                </button>
             </form>
         </div>
     </div>
