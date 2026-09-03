@@ -8,12 +8,12 @@
 </head>
 <body>
 
-    <!-- Header Navigation -->
+    <!-- Header Navbar -->
     <header class="navbar">
         <div class="logo">
             <span class="logo-icon">📚</span>
             <span class="logo-text">Góc Học Tập</span>
-            <span id="admin-badge" class="badge badge-hot" style="display: none; position: static; margin-left: 8px;">ADMIN</span>
+            <span id="admin-badge" class="badge badge-hot" style="display: none; margin-left: 8px;">ADMIN</span>
         </div>
 
         <nav class="nav-links">
@@ -35,7 +35,7 @@
         <button id="logout-btn" class="btn btn-outline" style="display: none;" onclick="logout()">Đăng xuất</button>
     </header>
 
-    <!-- Main Content -->
+    <!-- Main Content Layout -->
     <main class="course-container">
         <!-- Cột Trái: Video, Sơ Đồ Tư Duy & Bảng Xếp Hạng -->
         <section class="left-content">
@@ -72,11 +72,11 @@
                 <div class="card-title"><span class="icon">🏆</span> Bảng xếp hạng chuyên cần</div>
                 
                 <div class="user-rank-banner">
-                    <span class="lightning">⚡</span> Vị trí của bạn: <strong id="my-rank-text">Hạng 2/8</strong> · Cố lên nhé! 💪
+                    <span class="lightning">⚡</span> <span id="my-rank-text">Đang tải vị trí xếp hạng...</span> 💪
                 </div>
 
                 <div id="leaderboard-list" class="leaderboard-list">
-                    <!-- Danh sách xếp hạng render động từ JS -->
+                    <!-- Danh sách xếp hạng render động từ Firestore -->
                 </div>
             </div>
 
@@ -91,7 +91,7 @@
             </div>
         </section>
 
-        <!-- Cột Phải: Tiến Độ & Danh Sách Bài Học Accordion -->
+        <!-- Cột Phải: Tiến Độ & Nội Dung Khóa Học -->
         <aside class="right-sidebar">
             <div class="progress-card">
                 <div class="circle-progress">
@@ -160,7 +160,7 @@
         </aside>
     </main>
 
-    <!-- Modal Auth (Đăng nhập / Đăng ký) -->
+    <!-- Modal Đăng nhập / Đăng ký -->
     <div id="authModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
         <div class="modal-box">
             <span class="close-btn" onclick="closeModal()">&times;</span>
