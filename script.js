@@ -7,6 +7,17 @@ import {
     signOut,
     updateProfile 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { 
+    getFirestore, 
+    doc, 
+    setDoc, 
+    updateDoc, 
+    increment, 
+    collection, 
+    onSnapshot, 
+    query, 
+    orderBy 
+} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCt8Qzt5CgSl1N7KFOBiB2f_Yl_VTKCH-w",
@@ -20,79 +31,85 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const ADMIN_EMAIL = "hipomcvn@gmail.com";
+const db = getFirestore(app);
+
+let currentUser = null;
 
 // ==========================================
-// QUẢN LÝ ĐIỂM SỐ & BẢNG XẾP HẠNG
+// 1. LẮNG NGHE & RENDER BẢNG XẾP HẠNG THỰC TẾ
 // ==========================================
-let initialLeaderboard = [
-    { name: "Đào Minh Châu", points: 140, isUser: false, avatar: "M", avatarBg: "#e2f2e6", avatarColor: "#00a651" },
-    { name: "Nguyễn An", points: 70, isUser: true, avatar: "🌸", isEmoji: true },
-    { name: "Tuan Phuong", points: 50, isUser: false, avatar: "T", avatarBg: "#e0f2fe", avatarColor: "#0284c7" },
-    { name: "Trang tẹt", points: 50, isUser: false, avatar: "T", avatarBg: "#e0f2fe", avatarColor: "#0284c7" },
-    { name: "Duy Kiên", points: 40, isUser: false, avatar: "D", avatarBg: "#fef3c7", avatarColor: "#d97706" },
-    { name: "Đỗ Văn Bình", points: 20, isUser: false, avatar: "🏔️", isEmoji: true },
-    { name: "Trần cao Phú", points: 10, isUser: false, avatar: "C", avatarBg: "#e0f2fe", avatarColor: "#0284c7" },
-    { name: "My Ngoc", points: 10, isUser: false, avatar: "M", avatarBg: "#e2f2e6", avatarColor: "#00a651" }
-];
+function listenToLeaderboard() {
+    const q = query(collection(db, "users"), orderBy("points", "desc"));
 
-let userPoints = parseInt(localStorage.getItem('user_points') || "70");
+    onSnapshot(q, (snapshot) => {
+        const usersList = [];
+        snapshot.forEach((doc) => {
+            usersList.push({ id: doc.id, ...doc.data() });
+        });
+        renderLeaderboardUI(usersList);
+    });
+}
 
-function renderLeaderboard() {
-    const userIndex = initialLeaderboard.findIndex(item => item.isUser);
-    if (userIndex !== -1) {
-        initialLeaderboard[userIndex].points = userPoints;
-    }
-
-    initialLeaderboard.sort((a, b) => b.points - a.points);
-
-    const currentUserRank = initialLeaderboard.findIndex(item => item.isUser) + 1;
-    const rankText = document.getElementById('my-rank-text');
-    if (rankText) {
-        rankText.innerText = `Hạng ${currentUserRank}/${initialLeaderboard.length}`;
-    }
-
+function renderLeaderboardUI(usersList) {
     const listContainer = document.getElementById('leaderboard-list');
+    const rankText = document.getElementById('my-rank-text');
     if (!listContainer) return;
 
     listContainer.innerHTML = '';
+    let userRank = 0;
+    const totalUsers = usersList.length;
 
-    initialLeaderboard.forEach((item, index) => {
+    usersList.forEach((item, index) => {
         const rankNum = index + 1;
+        const isMe = currentUser && item.id === currentUser.uid;
+
+        if (isMe) userRank = rankNum;
+
         const row = document.createElement('div');
-        row.className = `rank-item ${item.isUser ? 'highlight-user' : ''}`;
+        row.className = `rank-item ${isMe ? 'highlight-user' : ''}`;
 
         let rankBadgeClass = 'rank-badge default';
         if (rankNum === 1) rankBadgeClass = 'rank-badge rank-1';
         if (rankNum === 2) rankBadgeClass = 'rank-badge rank-2';
         if (rankNum === 3) rankBadgeClass = 'rank-badge rank-3';
 
-        let avatarHTML = item.isEmoji 
-            ? `<div class="avatar-box emoji-avatar">${item.avatar}</div>`
-            : `<div class="avatar-box" style="background:${item.avatarBg}; color:${item.avatarColor}">${item.avatar}</div>`;
+        const firstLetter = (item.name || "U").charAt(0).toUpperCase();
 
         row.innerHTML = `
             <div class="user-info">
                 <span class="${rankBadgeClass}">${rankNum}</span>
-                ${avatarHTML}
-                <span class="user-name">${item.name}</span>
-                ${item.isUser ? '<span class="you-badge">Bạn</span>' : ''}
+                <div class="avatar-box" style="background: #e2f2e6; color: #00a651">${firstLetter}</div>
+                <span class="user-name">${item.name || "Học viên"}</span>
+                ${isMe ? '<span class="you-badge">Bạn</span>' : ''}
             </div>
-            <div class="points">${item.points} điểm</div>
+            <div class="points">${item.points || 0} điểm</div>
         `;
 
         listContainer.appendChild(row);
     });
-}
 
-function addPointsForWatching() {
-    userPoints += 10;
-    localStorage.setItem('user_points', userPoints);
-    renderLeaderboard();
+    if (rankText) {
+        rankText.innerText = userRank > 0 
+            ? `Vị trí của bạn: Hạng ${userRank}/${totalUsers} · Cố lên nhé!` 
+            : `Đăng nhập để xem vị trí của bạn trên bảng xếp hạng!`;
+    }
 }
 
 // ==========================================
-// TIẾN ĐỘ KHÓA HỌC
+// 2. TĂNG ĐIỂM KHI XEM XONG VIDEO (+10 ĐIỂM)
+// ==========================================
+async function addPointsForWatching() {
+    if (!currentUser) return;
+    const userRef = doc(db, "users", currentUser.uid);
+    try {
+        await updateDoc(userRef, { points: increment(10) });
+    } catch (e) {
+        console.error("Lỗi cộng điểm:", e);
+    }
+}
+
+// ==========================================
+// 3. TIẾN ĐỘ KHÓA HỌC
 // ==========================================
 const totalLessons = 90;
 let completedLessons = new Set(JSON.parse(localStorage.getItem('completed_lessons') || "[]"));
@@ -120,13 +137,10 @@ function markLessonAsCompleted(lessonTitle) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    updateProgressUI();
-    renderLeaderboard();
-});
+document.addEventListener('DOMContentLoaded', updateProgressUI);
 
 // ==========================================
-// YOUTUBE IFRAME API
+// 4. YOUTUBE IFRAME API
 // ==========================================
 let player;
 window.onYouTubeIframeAPIReady = function() {
@@ -143,7 +157,7 @@ if (!window.YT) {
 }
 
 function onPlayerStateChange(event) {
-    if (event.data === 0) { // Video kết thúc
+    if (event.data === 0) { // Khi video phát xong
         const activeLesson = document.querySelector('.lesson-item.active');
         if (activeLesson) {
             const statusIcon = activeLesson.querySelector('.status-icon');
@@ -158,7 +172,7 @@ function onPlayerStateChange(event) {
 }
 
 // ==========================================
-// CHUYỂN BÀI HỌC
+// 5. ĐỔI BÀI & BẤM NEXT
 // ==========================================
 window.changeVideo = function(videoId, title, chapterName, docLink, element) {
     const playerElem = document.getElementById('main-player');
@@ -201,8 +215,44 @@ window.prevLesson = function() {
 };
 
 // ==========================================
-// MODAL & AUTH
+// 6. XỬ LÝ ĐĂNG NHẬP / ĐĂNG KÝ (FIREBASE)
 // ==========================================
+window.handleAuth = async function(e, type) {
+    e.preventDefault();
+    if (type === 'register') {
+        const name = document.getElementById('register-fullname').value;
+        const email = document.getElementById('register-email').value;
+        const pass = document.getElementById('register-pass').value;
+
+        try {
+            const res = await createUserWithEmailAndPassword(auth, email, pass);
+            await updateProfile(res.user, { displayName: name });
+            
+            // Lưu thành viên mới vào Firestore với 10 điểm ban đầu
+            await setDoc(doc(db, "users", res.user.uid), {
+                name: name,
+                email: email,
+                points: 10
+            });
+
+            alert("Đăng ký tài khoản thành công!");
+            closeModal();
+        } catch (err) {
+            alert("Lỗi đăng ký: " + err.message);
+        }
+    } else {
+        const email = document.getElementById('login-email').value;
+        const pass = document.getElementById('login-pass').value;
+        try {
+            await signInWithEmailAndPassword(auth, email, pass);
+            alert("Đăng nhập thành công!");
+            closeModal();
+        } catch (err) {
+            alert("Lỗi đăng nhập: " + err.message);
+        }
+    }
+};
+
 window.openModal = function(tab) {
     const modal = document.getElementById('authModal');
     if (modal) { modal.style.display = 'flex'; window.switchTab(tab); }
@@ -233,7 +283,9 @@ window.logout = function() {
     signOut(auth).then(() => alert("Đã đăng xuất."));
 };
 
+// Theo dõi trạng thái tài khoản
 onAuthStateChanged(auth, (user) => {
+    currentUser = user;
     const userDisplay = document.getElementById('user-display');
     const authBtns = document.getElementById('auth-btns');
     const logoutBtn = document.getElementById('logout-btn');
@@ -247,4 +299,7 @@ onAuthStateChanged(auth, (user) => {
         if (logoutBtn) logoutBtn.style.display = 'none';
         if (userDisplay) userDisplay.innerText = '';
     }
+
+    // Kích hoạt lắng nghe Bảng xếp hạng Realtime từ database
+    listenToLeaderboard();
 });
