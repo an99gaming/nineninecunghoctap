@@ -1,160 +1,502 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { 
-    getAuth, 
-    createUserWithEmailAndPassword, 
-    signInWithEmailAndPassword, 
-    onAuthStateChanged, 
-    signOut,
-    updateProfile,
-    GoogleAuthProvider,
-    signInWithPopup
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { 
-    getFirestore, 
-    doc, 
-    setDoc 
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+* {
+    box-sizing: border-box;
+}
 
-// Cấu hình Firebase (Thay thế thông tin dự án của bạn tại đây)
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
-};
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    margin: 0;
+    background: #f8fafc;
+    color: #334155;
+}
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 12px 30px;
+    border-bottom: 1px solid #e2e8f0;
+}
 
-// ==========================================
-// CHUYỂN TAB & BẬT/TẮT MODAL
-// ==========================================
-window.switchTab = function(type) {
-    const loginForm = document.getElementById('login-form');
-    const registerForm = document.getElementById('register-form');
-    const tabLoginBtn = document.getElementById('tab-login-btn');
-    const tabRegisterBtn = document.getElementById('tab-register-btn');
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: bold;
+    font-size: 18px;
+    color: #00a651;
+}
 
-    if (type === 'login') {
-        loginForm.classList.remove('hidden');
-        registerForm.classList.add('hidden');
-        tabLoginBtn.classList.add('active');
-        tabRegisterBtn.classList.remove('active');
-    } else {
-        registerForm.classList.remove('hidden');
-        loginForm.classList.add('hidden');
-        tabRegisterBtn.classList.add('active');
-        tabLoginBtn.classList.remove('active');
-    }
-};
+.nav-links {
+    display: flex;
+    gap: 20px;
+}
 
-window.closeModal = function() {
-    document.getElementById('auth-modal').classList.add('hidden');
-};
+.nav-links a {
+    text-decoration: none;
+    color: #475569;
+    font-size: 14px;
+    font-weight: 500;
+}
 
-window.openModal = function() {
-    document.getElementById('auth-modal').classList.remove('hidden');
-};
+.badge {
+    font-size: 9px;
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-weight: bold;
+}
 
-// ==========================================
-// XỬ LÝ ĐĂNG NHẬP / ĐĂNG KÝ BẰNG EMAIL
-// ==========================================
-window.handleAuth = async function(e, type) {
-    e.preventDefault();
+.badge-hot {
+    background-color: #ffc107;
+    color: #000;
+}
 
-    if (type === 'register') {
-        const name = document.getElementById('register-fullname').value;
-        const email = document.getElementById('register-email').value;
-        const pass = document.getElementById('register-pass').value;
+.auth-buttons {
+    display: flex;
+    gap: 10px;
+}
 
-        try {
-            const res = await createUserWithEmailAndPassword(auth, email, pass);
-            await updateProfile(res.user, { displayName: name });
+.btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
 
-            // Lưu thông tin học viên vào Firestore
-            await setDoc(doc(db, "users", res.user.uid), {
-                name: name,
-                email: email,
-                points: 10
-            });
+.btn-primary {
+    background: #00a651;
+    color: #fff;
+    border: none;
+}
 
-            alert("Đăng ký tài khoản thành công!");
-            closeModal();
-        } catch (err) {
-            console.error("Lỗi đăng ký:", err.code);
-            switch (err.code) {
-                case 'auth/email-already-in-use':
-                    alert("Email này đã được đăng ký trước đó. Hệ thống đã tự chuyển sang tab Đăng nhập cho bạn!");
-                    window.switchTab('login');
-                    document.getElementById('login-email').value = email;
-                    break;
-                case 'auth/weak-password':
-                    alert("Mật khẩu quá yếu! Vui lòng đặt mật khẩu từ 6 ký tự trở lên.");
-                    break;
-                case 'auth/invalid-email':
-                    alert("Định dạng Email không hợp lệ!");
-                    break;
-                default:
-                    alert("Lỗi đăng ký: " + err.message);
-            }
-        }
-    } else {
-        const email = document.getElementById('login-email').value;
-        const pass = document.getElementById('login-pass').value;
+.btn-outline {
+    background: transparent;
+    border: 1px solid #cbd5e1;
+}
 
-        try {
-            await signInWithEmailAndPassword(auth, email, pass);
-            alert("Đăng nhập thành công!");
-            closeModal();
-        } catch (err) {
-            console.error("Lỗi đăng nhập:", err.code);
-            switch (err.code) {
-                case 'auth/invalid-credential':
-                case 'auth/user-not-found':
-                case 'auth/wrong-password':
-                    alert("Sai email hoặc mật khẩu! Vui lòng kiểm tra lại.");
-                    break;
-                default:
-                    alert("Lỗi đăng nhập: " + err.message);
-            }
-        }
-    }
-};
+/* LAYOUT CONTAINER */
+.course-container {
+    display: flex;
+    gap: 24px;
+    max-width: 1280px;
+    margin: 20px auto;
+    padding: 0 16px;
+}
 
-// ==========================================
-// ĐĂNG NHẬP BẰNG GOOGLE
-// ==========================================
-window.loginWithGoogle = async function() {
-    const provider = new GoogleAuthProvider();
-    try {
-        const result = await signInWithPopup(auth, provider);
-        const user = result.user;
+.left-content {
+    flex: 1;
+    min-width: 0;
+}
 
-        // Lưu / Cập nhật người dùng vào Firestore mà không đè mất dữ liệu cũ
-        await setDoc(doc(db, "users", user.uid), {
-            name: user.displayName || "Học viên Google",
-            email: user.email,
-            points: 10
-        }, { merge: true });
+.right-sidebar {
+    width: 360px;
+    flex-shrink: 0;
+}
 
-        alert("Đăng nhập bằng Google thành công!");
-        closeModal();
-    } catch (error) {
-        console.error("Lỗi Google Auth:", error);
-        alert("Đăng nhập Google thất bại: " + error.message);
-    }
-};
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #000;
+}
 
-// ==========================================
-// LẮNG NGHE TRẠNG THÁI ĐĂNG NHẬP
-// ==========================================
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        console.log("Đã đăng nhập với tên:", user.displayName || user.email);
-    } else {
-        console.log("Chưa đăng nhập.");
-    }
-});
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.lesson-header, .card-section, .document-card, .progress-card, .playlist-card {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    margin-top: 16px;
+    border: 1px solid #e2e8f0;
+}
+
+.chapter-tag {
+    color: #00a651;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.nav-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.btn-nav {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-next {
+    background: #00a651;
+    color: #ffffff;
+    border: none;
+}
+
+/* SƠ ĐỒ TƯ DUY */
+.card-title {
+    font-weight: 700;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.mindmap-placeholder {
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+    color: #94a3b8;
+    font-size: 14px;
+}
+
+/* BẢNG XẾP HẠNG */
+.user-rank-banner {
+    background: #ecfdf5;
+    color: #065f46;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 16px;
+}
+
+.leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.rank-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.rank-item:hover {
+    background: #f8fafc;
+}
+
+.rank-item.highlight-user {
+    background: #fefce8;
+    border: 1px solid #fef08a;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.rank-badge {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.rank-1 { background: #eab308; color: #fff; }
+.rank-2 { background: #94a3b8; color: #fff; }
+.rank-3 { background: #d97706; color: #fff; }
+.rank-badge.default { background: #f1f5f9; color: #64748b; }
+
+.avatar-box {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.user-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.you-badge {
+    background: #eab308;
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+}
+
+.points {
+    font-weight: 700;
+    color: #00a651;
+    font-size: 14px;
+}
+
+/* TIẾN ĐỘ & ACCORDION */
+.progress-card {
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.circle-progress {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 4px solid #00a651;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #00a651;
+    background: #ecfdf5;
+}
+
+.playlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.expand-all {
+    color: #00a651;
+    font-size: 13px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.sub-info {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.chapter-accordion {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+.chapter-header {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    cursor: pointer;
+}
+
+.chapter-badge {
+    background: #ecfdf5;
+    color: #00a651;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-right: 10px;
+}
+
+.lesson-list {
+    list-style: none;
+    padding: 6px;
+    margin: 0;
+}
+
+.lesson-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.lesson-item.active {
+    background: #ecfdf5;
+    color: #00a651;
+    font-weight: 600;
+}
+
+.status-icon {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    margin-right: 8px;
+}
+
+.status-icon.completed {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+.status-icon.play {
+    border: 1px solid #00a651;
+    color: #00a651;
+}
+
+/* ==========================================
+   MODAL ĐĂNG NHẬP / ĐĂNG KÝ (ĐÃ SỬA GIAO DIỆN)
+   ========================================== */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-box {
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    animation: modalFadeIn 0.25s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.close-btn {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    font-size: 24px;
+    color: #94a3b8;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: #1e293b;
+}
+
+.auth-header h2 {
+    margin: 0 0 20px 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #0f172a;
+    text-align: center;
+}
+
+/* Tab chuyển Đăng nhập / Đăng ký */
+.tab-header {
+    display: flex;
+    background: #f1f5f9;
+    padding: 4px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px 0;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 600;
+    color: #64748b;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+    background: #ffffff;
+    color: #00a651;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Form & Input */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus {
+    border-color: #00a651;
+    box-shadow: 0 0 0 3px rgba(0, 166, 81, 0.15);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s;
+}
+
+.green-btn {
+    background: #00a651;
+    color: #ffffff;
+}
+
+.green-btn:hover {
+    background: #008d44;
+}
+
+.hidden {
+    display: none !important;
+}
