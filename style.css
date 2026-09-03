@@ -357,7 +357,9 @@ body {
     color: #00a651;
 }
 
-/* MODAL */
+/* ==========================================
+   MODAL ĐĂNG NHẬP / ĐĂNG KÝ (ĐÃ SỬA GIAO DIỆN)
+   ========================================== */
 .modal-overlay {
     display: none;
     position: fixed;
@@ -365,16 +367,136 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
     justify-content: center;
     align-items: center;
+    z-index: 9999;
 }
 
 .modal-box {
-    background: #fff;
-    padding: 24px;
-    border-radius: 12px;
-    width: 360px;
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    animation: modalFadeIn 0.25s ease-out;
 }
 
-.hidden { display: none !important; }
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.close-btn {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    font-size: 24px;
+    color: #94a3b8;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: #1e293b;
+}
+
+.auth-header h2 {
+    margin: 0 0 20px 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #0f172a;
+    text-align: center;
+}
+
+/* Tab chuyển Đăng nhập / Đăng ký */
+.tab-header {
+    display: flex;
+    background: #f1f5f9;
+    padding: 4px;
+    border-radius: 10px;
+    margin-bottom: 24px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 10px 0;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 600;
+    color: #64748b;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+    background: #ffffff;
+    color: #00a651;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Form & Input */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus {
+    border-color: #00a651;
+    box-shadow: 0 0 0 3px rgba(0, 166, 81, 0.15);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.2s;
+}
+
+.green-btn {
+    background: #00a651;
+    color: #ffffff;
+}
+
+.green-btn:hover {
+    background: #008d44;
+}
+
+.hidden {
+    display: none !important;
+}
