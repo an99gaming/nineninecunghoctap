@@ -10,7 +10,6 @@ import {
     updateProfile 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-// Thông số kết nối Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyCt8Qzt5CgSl1N7KFOBiB2f_Yl_VTKCH-w",
   authDomain: "web-nine-nien-hoc-tap.firebaseapp.com",
@@ -24,27 +23,89 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
-
 const ADMIN_EMAIL = "hipomcvn@gmail.com";
 
 // ==========================================
-// THAY ĐỔI VIDEO BÀI HỌC & TÀI LIỆU
+// QUẢN LÝ TIẾN ĐỘ KHÓA HỌC
+// ==========================================
+const totalLessons = 90;
+let completedLessons = new Set(JSON.parse(localStorage.getItem('completed_lessons') || "[]"));
+
+function updateProgressUI() {
+    const completedCount = completedLessons.size;
+    const remainingCount = totalLessons - completedCount;
+    const percentage = Math.round((completedCount / totalLessons) * 100);
+
+    const circleText = document.querySelector('.circle-progress span');
+    if (circleText) circleText.innerText = `${percentage}%`;
+
+    const progressText = document.querySelector('.progress-info p');
+    if (progressText) {
+        progressText.innerHTML = `Đã học <strong>${completedCount}/${totalLessons}</strong> bài · còn ${remainingCount} bài`;
+    }
+}
+
+function markLessonAsCompleted(lessonId) {
+    if (!completedLessons.has(lessonId)) {
+        completedLessons.add(lessonId);
+        localStorage.setItem('completed_lessons', JSON.stringify(Array.from(completedLessons)));
+        updateProgressUI();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    updateProgressUI();
+});
+
+// ==========================================
+// YOUTUBE IFRAME API (Tăng tiến độ khi xem HẾT video)
+// ==========================================
+let player;
+window.onYouTubeIframeAPIReady = function() {
+    player = new YT.Player('main-player', {
+        events: {
+            'onStateChange': onPlayerStateChange
+        }
+    });
+};
+
+if (!window.YT) {
+    const tag = document.createElement('script');
+    tag.src = "https://www.youtube.com/iframe_api";
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+}
+
+function onPlayerStateChange(event) {
+    if (event.data === 0) { // State 0 = Video đã phát xong
+        const activeLesson = document.querySelector('.lesson-item.active');
+        if (activeLesson) {
+            const statusIcon = activeLesson.querySelector('.status-icon');
+            if (statusIcon) {
+                statusIcon.className = 'status-icon completed';
+                statusIcon.innerText = '✓';
+            }
+            const lessonTitle = activeLesson.querySelector('.lesson-text p')?.innerText || 'lesson';
+            markLessonAsCompleted(lessonTitle);
+        }
+    }
+}
+
+// ==========================================
+// CHUYỂN BÀI HỌC
 // ==========================================
 window.changeVideo = function(videoId, title, chapterName, docLink, element) {
-    // 1. Cập nhật Player YouTube
-    const player = document.getElementById('main-player');
-    if (player && videoId) {
-        player.src = "https://www.youtube.com/embed/" + videoId + "?autoplay=1";
+    const playerElem = document.getElementById('main-player');
+    if (playerElem && videoId) {
+        playerElem.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=1`;
     }
 
-    // 2. Cập nhật Tiêu đề bài học & Chương
     const titleElem = document.getElementById('video-title');
     if (titleElem && title) titleElem.innerText = title;
 
     const chapterElem = document.getElementById('chapter-tag');
     if (chapterElem && chapterName) chapterElem.innerText = chapterName;
 
-    // 3. Cập nhật Tài liệu đính kèm
     const docTitle = document.getElementById('doc-title');
     const docBtn = document.getElementById('doc-link');
     if (docTitle && docBtn) {
@@ -58,32 +119,36 @@ window.changeVideo = function(videoId, title, chapterName, docLink, element) {
         }
     }
 
-    // 4. Highlight bài học đang chọn
-    document.querySelectorAll('.lesson-item').forEach(item => {
-        item.classList.remove('active');
-    });
+    document.querySelectorAll('.lesson-item').forEach(item => item.classList.remove('active'));
 
-    if (element) {
-        element.classList.add('active');
-    } else if (window.event && window.event.currentTarget) {
-        window.event.currentTarget.classList.add('active');
+    let targetElement = element || (window.event && window.event.currentTarget);
+    if (targetElement) {
+        targetElement.classList.add('active');
     }
 };
 
-// ==========================================
-// NÚT BÀI TRƯỚC / BÀI TIẾP THEO
-// ==========================================
 window.nextLesson = function() {
     const lessons = Array.from(document.querySelectorAll('.lesson-item'));
     const currentIndex = lessons.findIndex(item => item.classList.contains('active'));
     
-    if (currentIndex !== -1 && currentIndex < lessons.length - 1) {
-        lessons[currentIndex + 1].click();
+    if (currentIndex !== -1) {
+        const currentLesson = lessons[currentIndex];
+        const currentTitle = currentLesson.querySelector('.lesson-text p')?.innerText || `lesson_${currentIndex}`;
         
-        const parentAccordion = lessons[currentIndex + 1].closest('.chapter-accordion');
-        if (parentAccordion) parentAccordion.open = true;
-    } else {
-        alert("Bạn đã ở bài học cuối cùng!");
+        const statusIcon = currentLesson.querySelector('.status-icon');
+        if (statusIcon) {
+            statusIcon.className = 'status-icon completed';
+            statusIcon.innerText = '✓';
+        }
+        markLessonAsCompleted(currentTitle);
+
+        if (currentIndex < lessons.length - 1) {
+            lessons[currentIndex + 1].click();
+            const parentAccordion = lessons[currentIndex + 1].closest('.chapter-accordion');
+            if (parentAccordion) parentAccordion.open = true;
+        } else {
+            alert("Bạn đã ở bài học cuối cùng!");
+        }
     }
 };
 
@@ -93,7 +158,6 @@ window.prevLesson = function() {
     
     if (currentIndex > 0) {
         lessons[currentIndex - 1].click();
-        
         const parentAccordion = lessons[currentIndex - 1].closest('.chapter-accordion');
         if (parentAccordion) parentAccordion.open = true;
     } else {
@@ -102,7 +166,7 @@ window.prevLesson = function() {
 };
 
 // ==========================================
-// QUẢN LÝ MODAL POPUP
+// MODAL & FIREBASE AUTHENTICATION
 // ==========================================
 window.openModal = function(tab) {
     const modal = document.getElementById('authModal');
@@ -132,61 +196,30 @@ window.switchTab = function(tab) {
     const registerForm = document.getElementById('register-form');
     const loginBtn = document.getElementById('tab-login-btn');
     const registerBtn = document.getElementById('tab-register-btn');
-    const modalTitle = document.getElementById('modal-title');
-    const modalSubtitle = document.getElementById('modal-subtitle');
 
     if (tab === 'login') {
         if (loginForm) loginForm.classList.remove('hidden');
         if (registerForm) registerForm.classList.add('hidden');
         if (loginBtn) loginBtn.classList.add('active');
         if (registerBtn) registerBtn.classList.remove('active');
-        if (modalTitle) modalTitle.innerText = 'Đăng nhập';
-        if (modalSubtitle) modalSubtitle.innerText = 'Chào mừng bạn quay lại! Tiếp tục lộ trình luyện thi của mình.';
     } else {
         if (loginForm) loginForm.classList.add('hidden');
         if (registerForm) registerForm.classList.remove('hidden');
         if (registerBtn) registerBtn.classList.add('active');
         if (loginBtn) loginBtn.classList.remove('active');
-        if (modalTitle) modalTitle.innerText = 'Đăng ký';
-        if (modalSubtitle) modalSubtitle.innerText = 'Tạo tài khoản để bắt đầu luyện thi và tham gia xếp hạng.';
     }
 };
 
-window.togglePasswordVisibility = function(inputId, iconElement) {
-    const input = document.getElementById(inputId);
-    if (input) {
-        if (input.type === 'password') {
-            input.type = 'text';
-            iconElement.innerText = '🙈';
-        } else {
-            input.type = 'password';
-            iconElement.innerText = '👁️';
-        }
-    }
-};
-
-// ==========================================
-// XỬ LÝ AUTHENTICATION FIREBASE
-// ==========================================
 window.handleAuth = async function(event, type) {
     event.preventDefault();
-    
     if (type === 'register') {
         const fullname = document.getElementById('register-fullname').value;
         const email = document.getElementById('register-email').value;
         const pass = document.getElementById('register-pass').value;
-        const confirmPass = document.getElementById('register-confirm-pass') ? document.getElementById('register-confirm-pass').value : pass;
-
-        if (pass !== confirmPass) {
-            alert("Mật khẩu nhập lại không khớp!");
-            return;
-        }
 
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-            if (fullname) {
-                await updateProfile(userCredential.user, { displayName: fullname });
-            }
+            if (fullname) await updateProfile(userCredential.user, { displayName: fullname });
             alert("Tạo tài khoản thành công!");
             window.closeModal();
         } catch (error) {
@@ -205,20 +238,8 @@ window.handleAuth = async function(event, type) {
     }
 };
 
-window.loginWithGoogle = async function() {
-    try {
-        await signInWithPopup(auth, googleProvider);
-        alert("Đăng nhập Google thành công!");
-        window.closeModal();
-    } catch (error) {
-        alert("Lỗi đăng nhập Google: " + error.message);
-    }
-};
-
 window.logout = function() {
-    signOut(auth).then(() => {
-        alert("Đã đăng xuất.");
-    });
+    signOut(auth).then(() => alert("Đã đăng xuất."));
 };
 
 onAuthStateChanged(auth, (user) => {
