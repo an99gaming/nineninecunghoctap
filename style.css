@@ -1,4 +1,3 @@
-/* --- GLOBAL STYLES --- */
 * {
     box-sizing: border-box;
 }
@@ -10,7 +9,7 @@ body {
     color: #333;
 }
 
-/* --- HEADER NAVBAR --- */
+/* NAVBAR */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -41,26 +40,12 @@ body {
     color: #333333;
     font-size: 14px;
     font-weight: 500;
-    position: relative;
-    transition: color 0.2s;
-}
-
-.nav-links a:hover {
-    color: #00a651;
-}
-
-/* Badge HOT & VIP */
-.has-badge {
-    position: relative;
 }
 
 .badge {
     font-size: 9px;
     padding: 2px 5px;
     border-radius: 4px;
-    position: absolute;
-    top: -12px;
-    right: -15px;
     font-weight: bold;
 }
 
@@ -69,14 +54,6 @@ body {
     color: #000;
 }
 
-.badge-vip {
-    background-color: #ffc107;
-    border-radius: 50%;
-    padding: 1px 3px;
-    font-size: 8px;
-}
-
-/* Auth Buttons Navbar */
 .auth-buttons {
     display: flex;
     gap: 10px;
@@ -88,7 +65,6 @@ body {
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
 }
 
 .btn-primary {
@@ -97,22 +73,13 @@ body {
     border: none;
 }
 
-.btn-primary:hover {
-    background-color: #008d44;
-}
-
 .btn-outline {
     background-color: white;
     color: #333;
     border: 1px solid #cccccc;
 }
 
-.btn-outline:hover {
-    border-color: #00a651;
-    color: #00a651;
-}
-
-/* --- BỐ CỤC CHÍNH (COURSE CONTAINER) --- */
+/* LAYOUT */
 .course-container {
     display: flex;
     gap: 24px;
@@ -131,7 +98,6 @@ body {
     flex-shrink: 0;
 }
 
-/* Khung Video 16:9 Chuẩn Responsive */
 .video-wrapper {
     position: relative;
     width: 100%;
@@ -140,7 +106,6 @@ body {
     overflow: hidden;
     border-radius: 12px;
     background: #000;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 .video-wrapper iframe {
@@ -152,8 +117,7 @@ body {
     border: 0;
 }
 
-/* Thẻ Thông Tin Bài Học */
-.lesson-header {
+.lesson-header, .document-card, .progress-card, .playlist-card {
     background: #ffffff;
     padding: 20px;
     border-radius: 12px;
@@ -161,121 +125,11 @@ body {
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
-.chapter-tag {
-    color: #00a651;
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.lesson-header h1 {
-    font-size: 20px;
-    margin: 8px 0;
-    color: #1a1a1a;
-    line-height: 1.4;
-}
-
-.view-count {
-    color: #777;
-    font-size: 13px;
-    margin: 0;
-}
-
-.nav-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-    margin-top: 16px;
-}
-
-.btn-nav {
-    padding: 8px 16px;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    background: #ffffff;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 13px;
-    transition: all 0.2s;
-}
-
-.btn-nav:hover {
-    background: #f8fafc;
-    border-color: #cbd5e1;
-}
-
-.btn-next {
-    background: #00a651;
-    color: #ffffff;
-    border: none;
-}
-
-.btn-next:hover {
-    background: #008d44;
-}
-
-/* Thẻ Tài Liệu Bài Học */
-.document-card {
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 12px;
-    margin-top: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-}
-
-.document-card h3 {
-    margin: 0 0 12px 0;
-    font-size: 16px;
-    color: #1a1a1a;
-}
-
-.doc-item {
-    display: flex;
-    align-items: center;
-    background: #f8fafc;
-    padding: 12px 16px;
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-}
-
-.doc-icon {
-    font-size: 18px;
-    margin-right: 10px;
-}
-
-.doc-name {
-    flex: 1;
-    font-size: 14px;
-    font-weight: 500;
-    color: #334155;
-}
-
-.btn-download {
-    color: #00a651;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 13px;
-    padding: 6px 12px;
-    border-radius: 6px;
-    background: #e6f7ef;
-    transition: background 0.2s;
-}
-
-.btn-download:hover {
-    background: #d1f2e0;
-}
-
-/* --- CỘT PHẢI: TIẾN ĐỘ & DANH SÁCH BÀI HỌC --- */
 .progress-card {
-    background: #ffffff;
-    padding: 16px;
-    border-radius: 12px;
+    margin-top: 0;
     display: flex;
     align-items: center;
     gap: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    margin-bottom: 16px;
 }
 
 .circle-progress {
@@ -293,60 +147,40 @@ body {
     flex-shrink: 0;
 }
 
-.progress-info h4 {
-    margin: 0 0 4px 0;
-    font-size: 15px;
-    color: #1a1a1a;
-}
-
-.progress-info p {
-    margin: 0;
-    color: #64748b;
+.chapter-tag {
+    color: #00a651;
     font-size: 13px;
+    font-weight: 700;
 }
 
-.playlist-card {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-}
-
-.playlist-header {
+.nav-buttons {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid #f1f5f9;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 16px;
 }
 
-.playlist-header h3 {
-    margin: 0;
-    font-size: 16px;
-    color: #1a1a1a;
+.btn-nav {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    cursor: pointer;
+    font-weight: 600;
 }
 
-.total-info {
-    font-size: 12px;
-    color: #64748b;
-    font-weight: 500;
+.btn-next {
+    background: #00a651;
+    color: #ffffff;
+    border: none;
 }
 
-/* Thẻ Details Accordion */
+/* ACCORDION & LESSONS */
 .chapter-accordion {
     background: #f8fafc;
     border: 1px solid #e2e8f0;
     border-radius: 10px;
     margin-bottom: 10px;
-    overflow: hidden;
-    transition: all 0.25s ease;
-}
-
-.chapter-accordion[open] {
-    background: #ffffff;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-    border-color: #cbd5e1;
 }
 
 .chapter-header {
@@ -354,58 +188,21 @@ body {
     align-items: center;
     padding: 12px 14px;
     cursor: pointer;
-    list-style: none;
-    user-select: none;
-}
-
-.chapter-header::-webkit-details-marker {
-    display: none;
 }
 
 .chapter-badge {
     background: #e6f7ef;
     color: #00a651;
     font-weight: 700;
-    font-size: 12px;
     padding: 5px 8px;
     border-radius: 6px;
     margin-right: 12px;
-    flex-shrink: 0;
-}
-
-.chapter-info {
-    flex: 1;
-}
-
-.chapter-info h4 {
-    margin: 0;
-    font-size: 13px;
-    font-weight: 700;
-    color: #1e293b;
-    line-height: 1.3;
-}
-
-.chapter-info span {
-    font-size: 11px;
-    color: #64748b;
-}
-
-.arrow-icon {
-    font-size: 11px;
-    color: #94a3b8;
-    transition: transform 0.25s ease;
-    margin-left: 8px;
-}
-
-.chapter-accordion[open] .arrow-icon {
-    transform: rotate(90deg);
 }
 
 .lesson-list {
     list-style: none;
     padding: 6px;
     margin: 0;
-    border-top: 1px solid #f1f5f9;
 }
 
 .lesson-item {
@@ -414,12 +211,6 @@ body {
     padding: 10px 12px;
     border-radius: 8px;
     cursor: pointer;
-    transition: background 0.2s, color 0.2s;
-    margin-bottom: 2px;
-}
-
-.lesson-item:hover {
-    background: #f1f5f9;
 }
 
 .lesson-item.active {
@@ -437,7 +228,6 @@ body {
     justify-content: center;
     font-size: 11px;
     margin-right: 10px;
-    flex-shrink: 0;
 }
 
 .status-icon.completed {
@@ -450,13 +240,7 @@ body {
     color: #00a651;
 }
 
-.lesson-text p {
-    margin: 0;
-    font-size: 13px;
-    line-height: 1.4;
-}
-
-/* --- MODAL AUTHENTICATION --- */
+/* MODAL */
 .modal-overlay {
     display: none;
     position: fixed;
@@ -470,275 +254,13 @@ body {
     align-items: center;
 }
 
-.modal-overlay.active {
-    display: flex !important;
-}
-
 .modal-box {
     background: #ffffff;
-    width: 420px;
-    max-width: 90%;
-    padding: 25px 30px;
+    width: 400px;
+    padding: 25px;
     border-radius: 16px;
-    position: relative;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    animation: fadeIn 0.25s ease-out;
-    max-height: 90vh;
-    overflow-y: auto;
-}
-
-.modal-box::-webkit-scrollbar {
-    width: 6px;
-}
-
-.modal-box::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 4px;
-}
-
-@keyframes fadeIn {
-    from { transform: translateY(-15px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-.close-btn {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 24px;
-    cursor: pointer;
-    color: #888;
-    line-height: 1;
-}
-
-.close-btn:hover {
-    color: #333;
-}
-
-.auth-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.auth-header h2 {
-    margin: 0;
-    font-size: 22px;
-    color: #1a1a1a;
-}
-
-.back-home {
-    font-size: 13px;
-    color: #00a651;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.back-home:hover {
-    text-decoration: underline;
-}
-
-.tab-header {
-    display: flex;
-    border-bottom: 2px solid #f0f0f0;
-    margin-bottom: 12px;
-}
-
-.tab-btn {
-    flex: 1;
-    padding: 10px;
-    border: none;
-    background: none;
-    font-size: 15px;
-    font-weight: 600;
-    color: #888;
-    cursor: pointer;
-    transition: all 0.2s;
-    border-bottom: 3px solid transparent;
-}
-
-.tab-btn.active {
-    color: #00a651;
-    border-bottom: 3px solid #00a651;
-}
-
-.modal-subtitle {
-    font-size: 13px;
-    color: #666;
-    margin-bottom: 18px;
-    line-height: 1.4;
-}
-
-.form-group {
-    margin-bottom: 14px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 6px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #333;
-}
-
-.sub-label {
-    font-size: 11px;
-    color: #777;
-    font-weight: normal;
-}
-
-.input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.input-icon {
-    position: absolute;
-    left: 12px;
-    font-size: 14px;
-    color: #888;
-    pointer-events: none;
-    z-index: 2;
-}
-
-.eye-icon {
-    position: absolute;
-    right: 12px;
-    font-size: 14px;
-    cursor: pointer;
-    user-select: none;
-    z-index: 2;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 10px 38px 10px 38px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 14px;
-    transition: border-color 0.2s;
-}
-
-.form-group input:focus {
-    border-color: #00a651;
-    outline: none;
-    box-shadow: 0 0 0 2px rgba(0, 166, 81, 0.1);
-}
-
-.field-hint {
-    font-size: 11px;
-    color: #666;
-    margin: 4px 0 0 0;
-    line-height: 1.3;
-}
-
-.form-options {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 15px;
-}
-
-.forgot-link {
-    font-size: 12px;
-    color: #00a651;
-    text-decoration: none;
-}
-
-.forgot-link:hover {
-    text-decoration: underline;
-}
-
-.submit-btn {
-    width: 100%;
-    padding: 12px;
-    background-color: #00a651;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 15px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.submit-btn:hover {
-    background-color: #008d44;
-}
-
-.divider {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    margin: 16px 0;
-    color: #888;
-    font-size: 12px;
-}
-
-.divider::before, .divider::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid #eee;
-}
-
-.divider span {
-    padding: 0 10px;
-}
-
-.btn-google {
-    width: 100%;
-    padding: 10px;
-    background: #ffffff;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    font-size: 14px;
-    font-weight: 500;
-    color: #444;
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.btn-google:hover {
-    background-color: #f8f9fa;
-}
-
-.auth-footer-text {
-    text-align: center;
-    font-size: 13px;
-    color: #666;
-    margin-top: 16px;
-}
-
-.auth-footer-text a {
-    color: #00a651;
-    text-decoration: none;
-    font-weight: 600;
-}
-
-.auth-footer-text a:hover {
-    text-decoration: underline;
 }
 
 .hidden {
     display: none !important;
-}
-
-/* --- RESPONSIVE --- */
-@media (max-width: 900px) {
-    .course-container {
-        flex-direction: column;
-    }
-    
-    .right-sidebar {
-        width: 100%;
-    }
-    
-    .nav-links {
-        display: none;
-    }
 }
