@@ -5,7 +5,9 @@ import {
     signInWithEmailAndPassword, 
     onAuthStateChanged, 
     signOut,
-    updateProfile 
+    updateProfile,
+    GoogleAuthProvider,
+    signInWithPopup
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 import { 
     getFirestore, 
@@ -215,10 +217,11 @@ window.prevLesson = function() {
 };
 
 // ==========================================
-// 6. XỬ LÝ ĐĂNG NHẬP / ĐĂNG KÝ (FIREBASE)
+// 6. XỬ LÝ ĐĂNG NHẬP / ĐĂNG KÝ (EMAIL & PASSWORD)
 // ==========================================
 window.handleAuth = async function(e, type) {
     e.preventDefault();
+
     if (type === 'register') {
         const name = document.getElementById('register-fullname').value;
         const email = document.getElementById('register-email').value;
@@ -238,24 +241,79 @@ window.handleAuth = async function(e, type) {
             alert("Đăng ký tài khoản thành công!");
             closeModal();
         } catch (err) {
-            alert("Lỗi đăng ký: " + err.message);
+            console.error("Lỗi đăng ký:", err.code);
+            switch (err.code) {
+                case 'auth/email-already-in-use':
+                    alert("Email này đã được đăng ký trước đó. Hệ thống đã chuyển sang tab Đăng nhập cho bạn!");
+                    window.switchTab('login');
+                    document.getElementById('login-email').value = email;
+                    break;
+                case 'auth/weak-password':
+                    alert("Mật khẩu quá yếu! Vui lòng nhập tối thiểu 6 ký tự.");
+                    break;
+                case 'auth/invalid-email':
+                    alert("Định dạng Email không hợp lệ!");
+                    break;
+                default:
+                    alert("Lỗi đăng ký: " + err.message);
+            }
         }
     } else {
         const email = document.getElementById('login-email').value;
         const pass = document.getElementById('login-pass').value;
+
         try {
             await signInWithEmailAndPassword(auth, email, pass);
             alert("Đăng nhập thành công!");
             closeModal();
         } catch (err) {
-            alert("Lỗi đăng nhập: " + err.message);
+            console.error("Lỗi đăng nhập:", err.code);
+            switch (err.code) {
+                case 'auth/invalid-credential':
+                case 'auth/user-not-found':
+                case 'auth/wrong-password':
+                    alert("Sai tài khoản hoặc mật khẩu! Vui lòng kiểm tra lại.");
+                    break;
+                default:
+                    alert("Lỗi đăng nhập: " + err.message);
+            }
         }
     }
 };
 
+// ==========================================
+// 7. ĐĂNG NHẬP BẰNG GOOGLE
+// ==========================================
+window.loginWithGoogle = async function() {
+    const provider = new GoogleAuthProvider();
+    try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+
+        // Lưu / Cập nhật thông tin vào Firestore (Sử dụng merge: true để giữ lại điểm cũ nếu có)
+        await setDoc(doc(db, "users", user.uid), {
+            name: user.displayName || "Học viên Google",
+            email: user.email,
+            points: 10
+        }, { merge: true });
+
+        alert("Đăng nhập bằng Google thành công!");
+        closeModal();
+    } catch (error) {
+        console.error("Lỗi Google Auth:", error);
+        alert("Đăng nhập bằng Google thất bại: " + error.message);
+    }
+};
+
+// ==========================================
+// 8. ĐIỀU KHIỂN MODAL & TAB
+// ==========================================
 window.openModal = function(tab) {
     const modal = document.getElementById('authModal');
-    if (modal) { modal.style.display = 'flex'; window.switchTab(tab); }
+    if (modal) { 
+        modal.style.display = 'flex'; 
+        window.switchTab(tab); 
+    }
 };
 
 window.closeModal = function() {
@@ -290,7 +348,9 @@ window.logout = function() {
     signOut(auth).then(() => alert("Đã đăng xuất."));
 };
 
-// Theo dõi trạng thái tài khoản
+// ==========================================
+// 9. THEO DÕI TRẠNG THÁI TÀI KHOẢN (REALTIME)
+// ==========================================
 onAuthStateChanged(auth, (user) => {
     currentUser = user;
     const userDisplay = document.getElementById('user-display');
