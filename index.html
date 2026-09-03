@@ -36,44 +36,107 @@
     </header>
 
     <!-- Main Content -->
-    <main class="container">
-        <section class="video-container">
-            <iframe id="main-player" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
-            <h2 id="video-title">Bài 1: Giới thiệu khóa học</h2>
-            <div class="notes">
-                <h3>Ghi chú bài học:</h3>
-                <p id="video-desc">Nội dung tóm tắt kiến thức trọng tâm...</p>
+    <main class="course-container">
+        <!-- Cột Trái: Video & Thông Tin Bài Học -->
+        <section class="left-content">
+            <div class="video-wrapper">
+                <!-- Đã gắn link Youtube Bài 1: rBUEpdM8z9k -->
+                <iframe id="main-player" 
+                        src="https://www.youtube.com/embed/rBUEpdM8z9k" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                </iframe>
+            </div>
+
+            <div class="lesson-header">
+                <span class="chapter-tag" id="chapter-tag">CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ</span>
+                <h1 id="video-title">Bài 1 - Buổi 1. Thành phần nguyên tử</h1>
+                <p class="view-count">👁️ 25 lượt xem</p>
+                
+                <div class="nav-buttons">
+                    <button class="btn-nav btn-prev" onclick="prevLesson()">← Bài trước</button>
+                    <button class="btn-nav btn-next" onclick="nextLesson()">Bài tiếp theo →</button>
+                </div>
+            </div>
+
+            <!-- Khung Tài Liệu Bài Học -->
+            <div class="document-card">
+                <h3>📑 Tài liệu bài học</h3>
+                <div class="doc-item">
+                    <span class="doc-icon">📄</span>
+                    <span id="doc-title" class="doc-name">Bài 1 - Buổi 1 - Thành phần nguyên tử - File đề.pdf</span>
+                    <a id="doc-link" href="#" class="btn-download" download>📥 Tải về</a>
+                </div>
             </div>
         </section>
 
-        <aside class="playlist">
-            <h3>Danh Sách Bài Học</h3>
-            <ul id="lesson-list">
-                <li class="active" onclick="changeVideo('dQw4w9WgXcQ', 'Bài 1: Giới thiệu', 'Nội dung ghi chú bài 1...')">Bài 1: Giới thiệu</li>
-                <li onclick="changeVideo('dQw4w9WgXcQ', 'Bài 2: Kiến thức cơ bản', 'Nội dung ghi chú bài 2...')">Bài 2: Kiến thức cơ bản</li>
-            </ul>
+        <!-- Cột Phải: Tiến Độ & Danh Sách Bài Học Accordion -->
+        <aside class="right-sidebar">
+            <!-- Khung Tiến Độ Khóa Học -->
+            <div class="progress-card">
+                <div class="circle-progress">
+                    <span>8%</span>
+                </div>
+                <div class="progress-info">
+                    <h4>Tiến độ khóa học</h4>
+                    <p>Đã học <strong>7/90</strong> bài · còn 83 bài</p>
+                </div>
+            </div>
+
+            <!-- Danh Sách Chương & Bài Học -->
+            <div class="playlist-card">
+                <div class="playlist-header">
+                    <h3>📖 Nội dung khóa học</h3>
+                    <span class="total-info">7 chương · 90 bài học</span>
+                </div>
+
+                <!-- CHƯƠNG 1 -->
+                <details class="chapter-accordion" open>
+                    <summary class="chapter-header">
+                        <div class="chapter-badge">01</div>
+                        <div class="chapter-info">
+                            <h4>CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ</h4>
+                            <span>21 bài học</span>
+                        </div>
+                        <span class="arrow-icon">❯</span>
+                    </summary>
+                    <ul class="lesson-list">
+                        <!-- Bài 1: Gắn ID rBUEpdM8z9k -->
+                        <li class="lesson-item active" onclick="changeVideo('rBUEpdM8z9k', 'Bài 1 - Buổi 1. Thành phần nguyên tử', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-1.pdf', this)">
+                            <span class="status-icon completed">✓</span>
+                            <div class="lesson-text">
+                                <p>Bài 1 - Buổi 1. Thành phần nguyên tử</p>
+                            </div>
+                        </li>
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_2', 'Bài 1 - Buổi 2. Câu hỏi trắc nghiệm chọn nhiều phương án', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-2.pdf', this)">
+                            <span class="status-icon play">▶</span>
+                            <div class="lesson-text">
+                                <p>Bài 1 - Buổi 2. Câu hỏi trắc nghiệm nhiều phương án lựa chọn</p>
+                            </div>
+                        </li>
+                    </ul>
+                </details>
+
+                <!-- Các chương tiếp theo... -->
+            </div>
         </aside>
     </main>
 
-    <!-- Modal Popup Đăng nhập / Đăng ký Chuẩn -->
+    <!-- Modal Auth (Đăng nhập / Đăng ký) -->
     <div id="authModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
         <div class="modal-box">
             <span class="close-btn" onclick="closeModal()">&times;</span>
-            
             <div class="auth-header">
                 <h2 id="modal-title">Đăng nhập</h2>
                 <a href="#" class="back-home" onclick="closeModal(); return false;">← Trang chủ</a>
             </div>
-
-            <!-- Tab Chuyển Đổi -->
             <div class="tab-header">
                 <button id="tab-login-btn" class="tab-btn active" onclick="switchTab('login')">Đăng nhập</button>
                 <button id="tab-register-btn" class="tab-btn" onclick="switchTab('register')">Đăng ký</button>
             </div>
+            <p id="modal-subtitle" class="modal-subtitle">Chào mừng bạn quay lại!</p>
 
-            <p id="modal-subtitle" class="modal-subtitle">Chào mừng bạn quay lại! Tiếp tục lộ trình luyện thi của mình.</p>
-
-            <!-- Form Đăng Nhập -->
             <form id="login-form" class="auth-form" onsubmit="handleAuth(event, 'login')">
                 <div class="form-group">
                     <label>Email</label>
@@ -82,40 +145,16 @@
                         <input type="email" id="login-email" required placeholder="nhapemail@gmail.com">
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label>Mật khẩu</label>
                     <div class="input-wrapper">
                         <span class="input-icon">🔒</span>
                         <input type="password" id="login-pass" required placeholder="••••••••">
-                        <span class="eye-icon" onclick="togglePasswordVisibility('login-pass', this)">👁️</span>
                     </div>
                 </div>
-
-                <div class="form-options">
-                    <a href="#" class="forgot-link">Quên mật khẩu?</a>
-                </div>
-
                 <button type="submit" class="submit-btn green-btn">Đăng nhập</button>
-
-                <div class="divider">
-                    <span>hoặc</span>
-                </div>
-
-                <button type="button" class="btn-google" onclick="loginWithGoogle()">
-                    <svg class="google-svg" viewBox="0 0 48 48" width="18" height="18">
-                        <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-                        <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-                        <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
-                        <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-                    </svg>
-                    Đăng nhập với Google
-                </button>
-
-                <p class="auth-footer-text">Bạn chưa có tài khoản? <a href="#" onclick="switchTab('register'); return false;">Đăng ký ngay</a></p>
             </form>
 
-            <!-- Form Đăng Ký -->
             <form id="register-form" class="auth-form hidden" onsubmit="handleAuth(event, 'register')">
                 <div class="form-group">
                     <label>Họ và tên</label>
@@ -124,16 +163,6 @@
                         <input type="text" id="register-fullname" required placeholder="Nguyễn Văn A">
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label>Biệt danh <span class="sub-label">(hiển thị trên bảng xếp hạng)</span></label>
-                    <div class="input-wrapper">
-                        <span class="input-icon">🪄</span>
-                        <input type="text" id="register-nickname" placeholder="VD: Đại Thánh">
-                    </div>
-                    <p class="field-hint">Biệt danh dùng để xếp hạng công khai trên các bài thi thử – nên đặt ngắn gọn, dễ nhớ.</p>
-                </div>
-
                 <div class="form-group">
                     <label>Email</label>
                     <div class="input-wrapper">
@@ -141,28 +170,14 @@
                         <input type="email" id="register-email" required placeholder="email@gmail.com">
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label>Mật khẩu</label>
                     <div class="input-wrapper">
                         <span class="input-icon">🔒</span>
                         <input type="password" id="register-pass" minlength="6" required placeholder="Tạo mật khẩu">
-                        <span class="eye-icon" onclick="togglePasswordVisibility('register-pass', this)">👁️</span>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label>Nhập lại mật khẩu</label>
-                    <div class="input-wrapper">
-                        <span class="input-icon">🔒</span>
-                        <input type="password" id="register-confirm-pass" minlength="6" required placeholder="Nhập lại mật khẩu">
-                        <span class="eye-icon" onclick="togglePasswordVisibility('register-confirm-pass', this)">👁️</span>
-                    </div>
-                </div>
-
                 <button type="submit" class="submit-btn green-btn">Tạo tài khoản</button>
-
-                <p class="auth-footer-text">Bạn đã có tài khoản? <a href="#" onclick="switchTab('login'); return false;">Đăng nhập ngay</a></p>
             </form>
         </div>
     </div>
