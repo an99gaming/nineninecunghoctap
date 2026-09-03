@@ -3,8 +3,6 @@ import {
     getAuth, 
     createUserWithEmailAndPassword, 
     signInWithEmailAndPassword, 
-    signInWithPopup, 
-    GoogleAuthProvider, 
     onAuthStateChanged, 
     signOut,
     updateProfile 
@@ -22,17 +20,85 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
 const ADMIN_EMAIL = "hipomcvn@gmail.com";
 
 // ==========================================
-// QUẢN LÝ TIẾN ĐỘ KHÓA HỌC
+// QUẢN LÝ ĐIỂM SỐ & BẢNG XẾP HẠNG
+// ==========================================
+let initialLeaderboard = [
+    { name: "Đào Minh Châu", points: 140, isUser: false, avatar: "M", avatarBg: "#e2f2e6", avatarColor: "#00a651" },
+    { name: "Nguyễn An", points: 70, isUser: true, avatar: "🌸", isEmoji: true },
+    { name: "Tuan Phuong", points: 50, isUser: false, avatar: "T", avatarBg: "#e0f2fe", avatarColor: "#0284c7" },
+    { name: "Trang tẹt", points: 50, isUser: false, avatar: "T", avatarBg: "#e0f2fe", avatarColor: "#0284c7" },
+    { name: "Duy Kiên", points: 40, isUser: false, avatar: "D", avatarBg: "#fef3c7", avatarColor: "#d97706" },
+    { name: "Đỗ Văn Bình", points: 20, isUser: false, avatar: "🏔️", isEmoji: true },
+    { name: "Trần cao Phú", points: 10, isUser: false, avatar: "C", avatarBg: "#e0f2fe", avatarColor: "#0284c7" },
+    { name: "My Ngoc", points: 10, isUser: false, avatar: "M", avatarBg: "#e2f2e6", avatarColor: "#00a651" }
+];
+
+let userPoints = parseInt(localStorage.getItem('user_points') || "70");
+
+function renderLeaderboard() {
+    const userIndex = initialLeaderboard.findIndex(item => item.isUser);
+    if (userIndex !== -1) {
+        initialLeaderboard[userIndex].points = userPoints;
+    }
+
+    initialLeaderboard.sort((a, b) => b.points - a.points);
+
+    const currentUserRank = initialLeaderboard.findIndex(item => item.isUser) + 1;
+    const rankText = document.getElementById('my-rank-text');
+    if (rankText) {
+        rankText.innerText = `Hạng ${currentUserRank}/${initialLeaderboard.length}`;
+    }
+
+    const listContainer = document.getElementById('leaderboard-list');
+    if (!listContainer) return;
+
+    listContainer.innerHTML = '';
+
+    initialLeaderboard.forEach((item, index) => {
+        const rankNum = index + 1;
+        const row = document.createElement('div');
+        row.className = `rank-item ${item.isUser ? 'highlight-user' : ''}`;
+
+        let rankBadgeClass = 'rank-badge default';
+        if (rankNum === 1) rankBadgeClass = 'rank-badge rank-1';
+        if (rankNum === 2) rankBadgeClass = 'rank-badge rank-2';
+        if (rankNum === 3) rankBadgeClass = 'rank-badge rank-3';
+
+        let avatarHTML = item.isEmoji 
+            ? `<div class="avatar-box emoji-avatar">${item.avatar}</div>`
+            : `<div class="avatar-box" style="background:${item.avatarBg}; color:${item.avatarColor}">${item.avatar}</div>`;
+
+        row.innerHTML = `
+            <div class="user-info">
+                <span class="${rankBadgeClass}">${rankNum}</span>
+                ${avatarHTML}
+                <span class="user-name">${item.name}</span>
+                ${item.isUser ? '<span class="you-badge">Bạn</span>' : ''}
+            </div>
+            <div class="points">${item.points} điểm</div>
+        `;
+
+        listContainer.appendChild(row);
+    });
+}
+
+function addPointsForWatching() {
+    userPoints += 10;
+    localStorage.setItem('user_points', userPoints);
+    renderLeaderboard();
+}
+
+// ==========================================
+// TIẾN ĐỘ KHÓA HỌC
 // ==========================================
 const totalLessons = 90;
 let completedLessons = new Set(JSON.parse(localStorage.getItem('completed_lessons') || "[]"));
 
 function updateProgressUI() {
-    const completedCount = completedLessons.size;
+    const completedCount = completedLessons.size || 7;
     const remainingCount = totalLessons - completedCount;
     const percentage = Math.round((completedCount / totalLessons) * 100);
 
@@ -45,27 +111,27 @@ function updateProgressUI() {
     }
 }
 
-function markLessonAsCompleted(lessonId) {
-    if (!completedLessons.has(lessonId)) {
-        completedLessons.add(lessonId);
+function markLessonAsCompleted(lessonTitle) {
+    if (!completedLessons.has(lessonTitle)) {
+        completedLessons.add(lessonTitle);
         localStorage.setItem('completed_lessons', JSON.stringify(Array.from(completedLessons)));
         updateProgressUI();
+        addPointsForWatching();
     }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     updateProgressUI();
+    renderLeaderboard();
 });
 
 // ==========================================
-// YOUTUBE IFRAME API (Tăng tiến độ khi xem HẾT video)
+// YOUTUBE IFRAME API
 // ==========================================
 let player;
 window.onYouTubeIframeAPIReady = function() {
     player = new YT.Player('main-player', {
-        events: {
-            'onStateChange': onPlayerStateChange
-        }
+        events: { 'onStateChange': onPlayerStateChange }
     });
 };
 
@@ -77,7 +143,7 @@ if (!window.YT) {
 }
 
 function onPlayerStateChange(event) {
-    if (event.data === 0) { // State 0 = Video đã phát xong
+    if (event.data === 0) { // Video kết thúc
         const activeLesson = document.querySelector('.lesson-item.active');
         if (activeLesson) {
             const statusIcon = activeLesson.querySelector('.status-icon');
@@ -103,28 +169,8 @@ window.changeVideo = function(videoId, title, chapterName, docLink, element) {
     const titleElem = document.getElementById('video-title');
     if (titleElem && title) titleElem.innerText = title;
 
-    const chapterElem = document.getElementById('chapter-tag');
-    if (chapterElem && chapterName) chapterElem.innerText = chapterName;
-
-    const docTitle = document.getElementById('doc-title');
-    const docBtn = document.getElementById('doc-link');
-    if (docTitle && docBtn) {
-        if (docLink) {
-            docTitle.innerText = `${title} - File đề.pdf`;
-            docBtn.href = docLink;
-            docBtn.style.display = 'inline-flex';
-        } else {
-            docTitle.innerText = 'Chưa có tài liệu đính kèm cho bài học này.';
-            docBtn.style.display = 'none';
-        }
-    }
-
     document.querySelectorAll('.lesson-item').forEach(item => item.classList.remove('active'));
-
-    let targetElement = element || (window.event && window.event.currentTarget);
-    if (targetElement) {
-        targetElement.classList.add('active');
-    }
+    if (element) element.classList.add('active');
 };
 
 window.nextLesson = function() {
@@ -144,10 +190,6 @@ window.nextLesson = function() {
 
         if (currentIndex < lessons.length - 1) {
             lessons[currentIndex + 1].click();
-            const parentAccordion = lessons[currentIndex + 1].closest('.chapter-accordion');
-            if (parentAccordion) parentAccordion.open = true;
-        } else {
-            alert("Bạn đã ở bài học cuối cùng!");
         }
     }
 };
@@ -155,86 +197,35 @@ window.nextLesson = function() {
 window.prevLesson = function() {
     const lessons = Array.from(document.querySelectorAll('.lesson-item'));
     const currentIndex = lessons.findIndex(item => item.classList.contains('active'));
-    
-    if (currentIndex > 0) {
-        lessons[currentIndex - 1].click();
-        const parentAccordion = lessons[currentIndex - 1].closest('.chapter-accordion');
-        if (parentAccordion) parentAccordion.open = true;
-    } else {
-        alert("Bạn đang ở bài học đầu tiên!");
-    }
+    if (currentIndex > 0) lessons[currentIndex - 1].click();
 };
 
 // ==========================================
-// MODAL & FIREBASE AUTHENTICATION
+// MODAL & AUTH
 // ==========================================
 window.openModal = function(tab) {
     const modal = document.getElementById('authModal');
-    if (modal) {
-        modal.classList.add('active');
-        modal.style.display = 'flex';
-        window.switchTab(tab);
-    }
+    if (modal) { modal.style.display = 'flex'; window.switchTab(tab); }
 };
 
 window.closeModal = function() {
     const modal = document.getElementById('authModal');
-    if (modal) {
-        modal.classList.remove('active');
-        modal.style.display = 'none';
-    }
+    if (modal) modal.style.display = 'none';
 };
 
-window.closeModalOnOverlay = function(event) {
-    if (event.target.id === 'authModal' || event.target.classList.contains('modal-overlay')) {
-        window.closeModal();
-    }
+window.closeModalOnOverlay = function(e) {
+    if (e.target.id === 'authModal') window.closeModal();
 };
 
 window.switchTab = function(tab) {
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
-    const loginBtn = document.getElementById('tab-login-btn');
-    const registerBtn = document.getElementById('tab-register-btn');
-
     if (tab === 'login') {
-        if (loginForm) loginForm.classList.remove('hidden');
-        if (registerForm) registerForm.classList.add('hidden');
-        if (loginBtn) loginBtn.classList.add('active');
-        if (registerBtn) registerBtn.classList.remove('active');
+        loginForm?.classList.remove('hidden');
+        registerForm?.classList.add('hidden');
     } else {
-        if (loginForm) loginForm.classList.add('hidden');
-        if (registerForm) registerForm.classList.remove('hidden');
-        if (registerBtn) registerBtn.classList.add('active');
-        if (loginBtn) loginBtn.classList.remove('active');
-    }
-};
-
-window.handleAuth = async function(event, type) {
-    event.preventDefault();
-    if (type === 'register') {
-        const fullname = document.getElementById('register-fullname').value;
-        const email = document.getElementById('register-email').value;
-        const pass = document.getElementById('register-pass').value;
-
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-            if (fullname) await updateProfile(userCredential.user, { displayName: fullname });
-            alert("Tạo tài khoản thành công!");
-            window.closeModal();
-        } catch (error) {
-            alert("Lỗi đăng ký: " + error.message);
-        }
-    } else if (type === 'login') {
-        const email = document.getElementById('login-email').value;
-        const pass = document.getElementById('login-pass').value;
-        try {
-            await signInWithEmailAndPassword(auth, email, pass);
-            alert("Đăng nhập thành công!");
-            window.closeModal();
-        } catch (error) {
-            alert("Lỗi đăng nhập: " + error.message);
-        }
+        loginForm?.classList.add('hidden');
+        registerForm?.classList.remove('hidden');
     }
 };
 
@@ -246,24 +237,14 @@ onAuthStateChanged(auth, (user) => {
     const userDisplay = document.getElementById('user-display');
     const authBtns = document.getElementById('auth-btns');
     const logoutBtn = document.getElementById('logout-btn');
-    const adminBadge = document.getElementById('admin-badge');
 
     if (user) {
-        const displayName = user.displayName || user.email;
         if (authBtns) authBtns.style.display = 'none';
         if (logoutBtn) logoutBtn.style.display = 'inline-block';
-        
-        if (user.email === ADMIN_EMAIL) {
-            if (userDisplay) userDisplay.innerText = `Admin: ${displayName}`;
-            if (adminBadge) adminBadge.style.display = 'inline-block';
-        } else {
-            if (userDisplay) userDisplay.innerText = `Chào: ${displayName}`;
-            if (adminBadge) adminBadge.style.display = 'none';
-        }
+        if (userDisplay) userDisplay.innerText = `Chào: ${user.displayName || user.email}`;
     } else {
         if (authBtns) authBtns.style.display = 'flex';
         if (logoutBtn) logoutBtn.style.display = 'none';
         if (userDisplay) userDisplay.innerText = '';
-        if (adminBadge) adminBadge.style.display = 'none';
     }
 });
