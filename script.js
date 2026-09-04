@@ -14,6 +14,7 @@ import {
     doc, 
     setDoc, 
     updateDoc, 
+    getDoc,
     increment, 
     collection, 
     onSnapshot, 
@@ -91,9 +92,13 @@ function renderLeaderboardUI(usersList) {
     });
 
     if (rankText) {
-        rankText.innerText = userRank > 0 
-            ? `Vị trí của bạn: Hạng ${userRank}/${totalUsers} · Cố lên nhé!` 
-            : `Đăng nhập để xem vị trí của bạn trên bảng xếp hạng!`;
+        if (currentUser) {
+            rankText.innerText = userRank > 0 
+                ? `Vị trí của bạn: Hạng ${userRank}/${totalUsers} · Cố lên nhé!` 
+                : `Đang cập nhật vị trí trên bảng xếp hạng...`;
+        } else {
+            rankText.innerText = `Đăng nhập để xem vị trí của bạn trên bảng xếp hạng!`;
+        }
     }
 }
 
@@ -104,7 +109,12 @@ async function addPointsForWatching() {
     if (!currentUser) return;
     const userRef = doc(db, "users", currentUser.uid);
     try {
-        await updateDoc(userRef, { points: increment(10) });
+        // Dùng setDoc với merge: true để tự tạo doc nếu chưa có, hoặc tăng điểm nếu đã có
+        await setDoc(userRef, { 
+            points: increment(10),
+            name: currentUser.displayName || "Học viên",
+            email: currentUser.email
+        }, { merge: true });
     } catch (e) {
         console.error("Lỗi cộng điểm:", e);
     }
@@ -117,7 +127,7 @@ const totalLessons = 90;
 let completedLessons = new Set(JSON.parse(localStorage.getItem('completed_lessons') || "[]"));
 
 function updateProgressUI() {
-    const completedCount = completedLessons.size || 7;
+    const completedCount = completedLessons.size;
     const remainingCount = totalLessons - completedCount;
     const percentage = Math.round((completedCount / totalLessons) * 100);
 
@@ -139,7 +149,10 @@ function markLessonAsCompleted(lessonTitle) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', updateProgressUI);
+document.addEventListener('DOMContentLoaded', () => {
+    updateProgressUI();
+    listenToLeaderboard(); // Lắng nghe bảng xếp hạng ngay khi tải trang
+});
 
 // ==========================================
 // 4. YOUTUBE IFRAME API
@@ -159,7 +172,7 @@ if (!window.YT) {
 }
 
 function onPlayerStateChange(event) {
-    if (event.data === 0) { // Khi video phát xong
+    if (event.data === 0) { // Khi video phát xong (Ended)
         const activeLesson = document.querySelector('.lesson-item.active');
         if (activeLesson) {
             const statusIcon = activeLesson.querySelector('.status-icon');
@@ -231,7 +244,7 @@ window.handleAuth = async function(e, type) {
             const res = await createUserWithEmailAndPassword(auth, email, pass);
             await updateProfile(res.user, { displayName: name });
             
-            // Lưu thành viên mới vào Firestore với 10 điểm ban đầu
+            // Lưu thành viên mới vào Firestore với 10 điểm khởi tạo
             await setDoc(doc(db, "users", res.user.uid), {
                 name: name,
                 email: email,
@@ -282,7 +295,7 @@ window.handleAuth = async function(e, type) {
 };
 
 // ==========================================
-// 7. ĐĂNG NHẬP BẰNG GOOGLE
+// 7. ĐĂNG NHẬP BẰNG GOOGLE (FIX LỖI MẤT ĐIỂM)
 // ==========================================
 window.loginWithGoogle = async function() {
     const provider = new GoogleAuthProvider();
@@ -290,12 +303,24 @@ window.loginWithGoogle = async function() {
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
 
-        // Lưu / Cập nhật thông tin vào Firestore (Sử dụng merge: true để giữ lại điểm cũ nếu có)
-        await setDoc(doc(db, "users", user.uid), {
-            name: user.displayName || "Học viên Google",
-            email: user.email,
-            points: 10
-        }, { merge: true });
+        // Kiểm tra xem User đã từng có dữ liệu điểm chưa
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (!userSnap.exists()) {
+            // Nếu là người dùng mới đăng nhập lần đầu -> Cho 10 điểm khởi tạo
+            await setDoc(userRef, {
+                name: user.displayName || "Học viên Google",
+                email: user.email,
+                points: 10
+            });
+        } else {
+            // Nếu đã tồn tại -> Chỉ cập nhật lại Tên/Email, giữ nguyên điểm số đã tích lũy
+            await setDoc(userRef, {
+                name: user.displayName || "Học viên Google",
+                email: user.email
+            }, { merge: true });
+        }
 
         alert("Đăng nhập bằng Google thành công!");
         closeModal();
@@ -339,7 +364,7 @@ window.switchTab = function(tab) {
     } else {
         loginForm?.classList.add('hidden');
         registerForm?.classList.remove('hidden');
-        tabRegisterBtn?.classList.add('active');
+        tabLoginBtn?.classList.add('active');
         tabLoginBtn?.classList.remove('active');
     }
 };
@@ -366,7 +391,4 @@ onAuthStateChanged(auth, (user) => {
         if (logoutBtn) logoutBtn.style.display = 'none';
         if (userDisplay) userDisplay.innerText = '';
     }
-
-    // Kích hoạt lắng nghe Bảng xếp hạng Realtime từ database
-    listenToLeaderboard();
 });
