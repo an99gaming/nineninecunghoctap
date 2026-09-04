@@ -3,190 +3,594 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Học Tập Trực Tuyến</title>
-    <!-- Nhúng file CSS trang trí -->
+    <title>Góc Học Tập Cá Nhân</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- NAVBAR (THANH ĐIỀU HƯỚNG) -->
-    <nav class="navbar">
-        <a href="#" class="logo">
-            🎓 Nền Tảng Học Tập
-        </a>
-        <div class="nav-links">
-            <a href="#">Khóa học <span class="badge badge-hot">HOT</span></a>
-            <a href="#">Tài liệu <span class="badge badge-vip">VIP</span></a>
-            <a href="#">Bảng xếp hạng</a>
+    <!-- Header Navbar -->
+    <header class="navbar">
+        <div class="logo">
+            <span class="logo-icon">📚</span>
+            <span class="logo-text">Góc Học Tập</span>
+            <span id="admin-badge" class="badge badge-hot" style="display: none; margin-left: 8px;">ADMIN</span>
         </div>
-        <div class="auth-buttons">
-            <span id="user-display" class="user-display-text"></span>
-            <span id="admin-badge" class="badge badge-vip hidden">Admin</span>
-            <div id="auth-btns">
-                <button class="btn btn-outline" onclick="openModal('login')">Đăng nhập</button>
-                <button class="btn btn-primary" onclick="openModal('register')">Đăng ký</button>
-            </div>
-            <button id="logout-btn" class="btn btn-outline hidden" onclick="logout()">Đăng xuất</button>
-        </div>
-    </nav>
 
-    <!-- LAYOUT CHÍNH KHÓA HỌC -->
-    <div class="course-container">
-        
-        <!-- CỘT BÊN TRÁI: VIDEO & BÀI HỌC & TÀI LIỆU -->
-        <div class="left-content">
-            
-            <!-- KHUNG BÀI HỌC VIDEO YOUTUBE -->
+        <nav class="nav-links">
+            <a href="#">Trang chủ</a>
+            <a href="#">Khóa học</a>
+            <a href="#" class="has-badge">Thi thử <span class="badge badge-hot">HOT</span></a>
+            <a href="#">Tài liệu</a>
+            <a href="#">Tin tức ▾</a>
+            <a href="#">Cộng đồng</a>
+            <a href="#" class="has-badge">Lớp của tôi <span class="badge badge-vip">👑</span></a>
+        </nav>
+
+        <div id="user-display" style="font-weight: bold; color: #00a651; margin-right: 10px;"></div>
+
+        <div id="auth-btns" class="auth-buttons">
+            <button class="btn btn-primary" onclick="openModal('register')">Đăng ký học</button>
+            <button class="btn btn-outline" onclick="openModal('login')">➜ Đăng nhập</button>
+        </div>
+        <button id="logout-btn" class="btn btn-outline" style="display: none;" onclick="logout()">Đăng xuất</button>
+    </header>
+
+    <!-- Main Content Layout -->
+    <main class="course-container">
+        <!-- Cột Trái: Video, Sơ Đồ Tư Duy & Bảng Xếp Hạng -->
+        <section class="left-content">
             <div class="video-wrapper">
-                <iframe id="main-player" src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <iframe id="main-player" 
+                        src="https://www.youtube.com/embed/rBUEpdM8z9k?enablejsapi=1" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                </iframe>
             </div>
 
-            <!-- TIÊU ĐỀ & ĐIỀU HƯỚNG BÀI HỌC -->
             <div class="lesson-header">
-                <span id="chapter-tag" class="chapter-tag">Chương 1: Mở Đầu</span>
-                <h1 id="video-title">Bài 1: Giới thiệu khóa học và lộ trình học tập</h1>
-                <div class="view-count">👁️ 1,250 lượt học</div>
+                <span class="chapter-tag" id="chapter-tag">CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ</span>
+                <h1 id="video-title">Bài 1 - Buổi 1. Thành phần nguyên tử</h1>
+                <p class="view-count">👁️ 29 lượt xem</p>
+                
                 <div class="nav-buttons">
-                    <button class="btn-nav" onclick="prevLesson()">❮ Bài trước</button>
-                    <button class="btn-nav btn-next" onclick="nextLesson()">Bài tiếp theo ❯</button>
+                    <button class="btn-nav btn-prev" onclick="prevLesson()">← Bài trước</button>
+                    <button class="btn-nav btn-next" onclick="nextLesson()">Bài tiếp theo →</button>
                 </div>
             </div>
 
-            <!-- THÔNG TIN TÀI LIỆU ĐÍNH KÈM -->
-            <div class="document-card">
-                <h3>📎 Tài liệu bài học</h3>
-                <div class="doc-item">
-                    <span id="doc-title" class="doc-name">Bài 1 - File đề bài và lý thuyết.pdf</span>
-                    <a id="doc-link" href="#" class="btn-download" target="_blank">Tải về</a>
-                </div>
-            </div>
-
-            <!-- BẢNG XẾP HẠNG REALTIME -->
+            <!-- Khung Sơ Đồ Tư Duy -->
             <div class="card-section">
-                <div class="card-title">🏆 Bảng Xếp Hạng Học Viên</div>
-                <div id="my-rank-text" class="user-rank-banner">
-                    Đăng nhập để xem vị trí của bạn trên bảng xếp hạng!
-                </div>
-                <div id="leaderboard-list" class="leaderboard-list">
-                    <!-- Danh sách người dùng sẽ được JavaScript tự động tạo vào đây -->
+                <div class="card-title"><span class="icon">🌿</span> Sơ đồ tư duy</div>
+                <div class="mindmap-placeholder">
+                    <span class="node-icon">🔗</span> Sơ đồ tư duy của buổi học sẽ được tải lên tại đây.
                 </div>
             </div>
 
-        </div>
+            <!-- Khung Bảng Xếp Hạng Chuyên Cần -->
+            <div class="card-section">
+                <div class="card-title"><span class="icon">🏆</span> Bảng xếp hạng chuyên cần</div>
+                
+                <div class="user-rank-banner">
+                    <span class="lightning">⚡</span> <span id="my-rank-text">Đang tải vị trí xếp hạng...</span> 💪
+                </div>
 
-        <!-- CỘT BÊN PHẢI: TIẾN ĐỘ & DANH SÁCH BÀI HỌC -->
-        <div class="right-sidebar">
-            
-            <!-- KHUNG TIẾN ĐỘ HỌC TẬP -->
+                <div id="leaderboard-list" class="leaderboard-list">
+                    <!-- Danh sách xếp hạng render động từ Firestore -->
+                </div>
+            </div>
+
+            <!-- Khung Tài Liệu Bài Học -->
+            <div class="document-card">
+                <h3>📑 Tài liệu bài học</h3>
+                <div class="doc-item">
+                    <span class="doc-icon">📄</span>
+                    <span id="doc-title" class="doc-name">Bài 1 - Buổi 1. Thành phần nguyên tử - File đề.pdf</span>
+                    <a id="doc-link" href="#" class="btn-download" download>📥 Tải về</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cột Phải: Tiến Độ & Nội Dung Khóa Học -->
+        <aside class="right-sidebar">
             <div class="progress-card">
                 <div class="circle-progress">
-                    <span>0%</span>
+                    <span>8%</span>
                 </div>
                 <div class="progress-info">
-                    <h4>Tiến độ hoàn thành</h4>
-                    <p>Đã học <strong>0/90</strong> bài · còn 90 bài</p>
+                    <h4>Tiến độ khóa học</h4>
+                    <p>Đã học <strong>7/90</strong> bài · còn 83 bài</p>
                 </div>
             </div>
 
-            <!-- DANH SÁCH BÀI HỌC (ACCORDION) -->
             <div class="playlist-card">
                 <div class="playlist-header">
-                    <h3>Nội dung khóa học</h3>
+                    <h3>📖 Nội dung khóa học</h3>
+                    <a href="#" class="expand-all">Mở rộng tất cả</a>
                 </div>
-                <span class="sub-info">90 bài học · Cập nhật liên tục</span>
+                <span class="sub-info">7 chương · 90 bài học</span>
 
                 <!-- CHƯƠNG 1 -->
                 <details class="chapter-accordion" open>
                     <summary class="chapter-header">
-                        <span class="chapter-badge">Chương 1</span>
+                        <div class="chapter-badge">01</div>
                         <div class="chapter-info">
-                            <h4>Kiến Thức Căn Bản</h4>
-                            <span>2 bài học</span>
+                            <h4>CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ</h4>
+                            <span>21 bài học</span>
                         </div>
                         <span class="arrow-icon"></span>
                     </summary>
                     <ul class="lesson-list">
-                        <li class="lesson-item active" onclick="changeVideo('dQw4w9WgXcQ', 'Bài 1: Giới thiệu khóa học và lộ trình học tập', 'Chương 1: Kiến Thức Căn Bản', '#', this, 0)">
-                            <div class="status-icon play">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        <li class="lesson-item completed" onclick="changeVideo('rBUEpdM8z9k', 'Bài 1 - Buổi 1. Thành phần nguyên tử', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-1.pdf', this, 0)">
+                            <div class="status-icon completed">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                             </div>
                             <div class="lesson-text">
-                                <span class="lesson-title">Bài 1: Giới thiệu khóa học và lộ trình học tập</span>
-                                <span class="doc-count">📄 1 tài liệu</span>
+                                <p class="lesson-title">Bài 1 - Buổi 1. Thành phần nguyên tử</p>
                             </div>
                         </li>
-                        <li class="lesson-item" onclick="changeVideo('dQw4w9WgXcQ', 'Bài 2: Hướng dẫn các thao tác cơ bản', 'Chương 1: Kiến Thức Căn Bản', '#', this, 1)">
+
+                        <li class="lesson-item active" onclick="changeVideo('ID_YOUTUBE_BAI_1_2', 'Bài 1 - Buổi 2. Câu hỏi trắc nghiệm nhiều phương án lựa chọn', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-1-2.pdf', this, 1)">
                             <div class="status-icon play">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
                             </div>
                             <div class="lesson-text">
-                                <span class="lesson-title">Bài 2: Hướng dẫn các thao tác cơ bản</span>
-                                <span class="doc-count">📄 1 tài liệu</span>
+                                <p class="lesson-title">Bài 1 - Buổi 2. Câu hỏi trắc nghiệm nhiều phương án lựa chọn</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_1_3', 'Bài 1 - Buổi 3. Bài tập về các hạt cơ bản trong nguyên tử', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-1-3.pdf', this, 2)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 1 - Buổi 3. Bài tập về các hạt cơ bản trong nguyên tử</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_1_4', 'Bài 1 - Buổi 4. Bài tập về các hạt trong ion và hợp chất', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-1-4.pdf', this, 3)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 1 - Buổi 4. Bài tập về các hạt trong ion và hợp chất</p>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item completed" onclick="changeVideo('ID_YOUTUBE_BAI_1_5', 'Bài 1 - Buổi 5. Bài tập về bán kính nguyên tử', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-1-5.pdf', this, 4)">
+                            <div class="status-icon completed">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 1 - Buổi 5. Bài tập về bán kính nguyên tử</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 2 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item completed" onclick="changeVideo('ID_YOUTUBE_BAI_1_6', 'Bài 1 - Buổi 6. Câu hỏi trắc nghiệm đúng sai', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-1-6.pdf', this, 5)">
+                            <div class="status-icon completed">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 1 - Buổi 6. Câu hỏi trắc nghiệm đúng sai</p>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_2_1', 'Bài 2 - Buổi 1. Nguyên tố hóa học - Đồng vị - Nguyên tử khối trung bình', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-2-1.pdf', this, 6)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 2 - Buổi 1. Nguyên tố hóa học - Đồng vị - Nguyên tử khối trung bình</p>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item completed" onclick="changeVideo('ID_YOUTUBE_BAI_2_2', 'Bài 2 - Buổi 2. Câu hỏi trắc nghiệm nhiều phương án lựa chọn', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-2-2.pdf', this, 7)">
+                            <div class="status-icon completed">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 2 - Buổi 2. Câu hỏi trắc nghiệm nhiều phương án lựa chọn</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_2_3', 'Bài 2 - Buổi 3. Bài tập về số khối - Kí hiệu nguyên tử', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-2-3.pdf', this, 8)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 2 - Buổi 3. Bài tập về số khối - Kí hiệu nguyên tử</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item completed" onclick="changeVideo('ID_YOUTUBE_BAI_2_4', 'Bài 2 - Buổi 4. Bài tập về đồng vị', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-2-4.pdf', this, 9)">
+                            <div class="status-icon completed">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 2 - Buổi 4. Bài tập về đồng vị</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 2 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_2_5', 'Bài 2 - Buổi 5. Câu hỏi trắc nghiệm đúng sai', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-2-5.pdf', this, 10)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 2 - Buổi 5. Câu hỏi trắc nghiệm đúng sai</p>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_3_1', 'Bài 3 - Buổi 1. Cấu trúc lớp vỏ electron nguyên tử', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-3-1.pdf', this, 11)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 3 - Buổi 1. Cấu trúc lớp vỏ electron nguyên tử</p>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item completed" onclick="changeVideo('ID_YOUTUBE_BAI_3_2', 'Bài 3 - Buổi 2. Câu hỏi trắc nghiệm nhiều phương án lựa chọn', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-3-2.pdf', this, 12)">
+                            <div class="status-icon completed">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 3 - Buổi 2. Câu hỏi trắc nghiệm nhiều phương án lựa chọn</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item completed" onclick="changeVideo('ID_YOUTUBE_BAI_3_3', 'Bài 3 - Buổi 3. Cấu hình electron nguyên tử', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-3-3.pdf', this, 13)">
+                            <div class="status-icon completed">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 3 - Buổi 3. Cấu hình electron nguyên tử</p>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_3_4', 'Bài 3 - Buổi 4. Câu hỏi lí thuyết về cấu hình electron nguyên tử', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-3-4.pdf', this, 14)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 3 - Buổi 4. Câu hỏi lí thuyết về cấu hình electron nguyên tử</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_3_5', 'Bài 3 - Buổi 5. Bài tập về cấu hình electron nguyên tử (Phần 1)', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-3-5.pdf', this, 15)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 3 - Buổi 5. Bài tập về cấu hình electron nguyên tử (Phần 1)</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_3_6', 'Bài 3 - Buổi 6. Bài tập về cấu hình electron nguyên tử (Phần 2)', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-3-6.pdf', this, 16)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 3 - Buổi 6. Bài tập về cấu hình electron nguyên tử (Phần 2)</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_3_7', 'Bài 3 - Buổi 7. Câu hỏi trắc nghiệm đúng sai', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-3-7.pdf', this, 17)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 3 - Buổi 7. Câu hỏi trắc nghiệm đúng sai</p>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_ON_TAP_1', 'Ôn tập kiến thức chương 1 (Buổi 1)', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-on-tap-1.pdf', this, 18)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Ôn tập kiến thức chương 1 (Buổi 1)</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_ON_TAP_2', 'Ôn tập kiến thức chương 1 (Buổi 2)', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-on-tap-2.pdf', this, 19)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Ôn tập kiến thức chương 1 (Buổi 2)</p>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_KIEM_TRA_1', 'Đề kiểm tra kiến thức chương 1', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-kiem-tra-1.pdf', this, 20)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Đề kiểm tra kiến thức chương 1</p>
                             </div>
                         </li>
                     </ul>
                 </details>
 
+                <!-- CHƯƠNG 2 -->
+                <details class="chapter-accordion">
+                    <summary class="chapter-header">
+                        <div class="chapter-badge">02</div>
+                        <div class="chapter-info">
+                            <h4>CHƯƠNG 2: BẢNG TUẦN HOÀN CÁC NGUYÊN TỐ HÓA HỌC</h4>
+                            <span>14 bài học</span>
+                        </div>
+                        <span class="arrow-icon"></span>
+                    </summary>
+                    <ul class="lesson-list">
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_22', 'Bài 5 - Buổi 1. Cấu tạo bảng tuần hoàn các nguyên tố hóa học', 'CHƯƠNG 2: BẢNG TUẦN HOÀN CÁC NGUYÊN TỐ HÓA HỌC', 'tai-lieu-bai-22.pdf', this, 21)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 5 - Buổi 1. Cấu tạo bảng tuần hoàn các nguyên tố hóa học</p>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_23', 'Bài 5 - Buổi 2. Câu hỏi trắc nghiệm nhiều phương án lựa chọn', 'CHƯƠNG 2: BẢNG TUẦN HOÀN CÁC NGUYÊN TỐ HÓA HỌC', 'tai-lieu-bai-23.pdf', this, 22)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 5 - Buổi 2. Câu hỏi trắc nghiệm nhiều phương án lựa chọn</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_24', 'Bài 5 - Buổi 3. Bài tập về cấu tạo bảng tuần hoàn', 'CHƯƠNG 2: BẢNG TUẦN HOÀN CÁC NGUYÊN TỐ HÓA HỌC', 'tai-lieu-bai-24.pdf', this, 23)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 5 - Buổi 3. Bài tập về cấu tạo bảng tuần hoàn</p>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_25', 'Bài 6 - Buổi 1. Xu hướng biến đổi một số tính chất của nguyên tử các nguyên tố trong một chu kì và trong một nhóm', 'CHƯƠNG 2: BẢNG TUẦN HOÀN CÁC NGUYÊN TỐ HÓA HỌC', 'tai-lieu-bai-25.pdf', this, 24)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 6 - Buổi 1. Xu hướng biến đổi một số tính chất của nguyên tử các nguyên tố trong một chu kì và trong một nhóm</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_26', 'Bài 6 - Buổi 2. Câu hỏi lí thuyết về xu hướng biến đổi một số tính chất của nguyên tử các nguyên tố trong một chu kì và trong một nhóm - Phần 1', 'CHƯƠNG 2: BẢNG TUẦN HOÀN CÁC NGUYÊN TỐ HÓA HỌC', 'tai-lieu-bai-26.pdf', this, 25)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 6 - Buổi 2. Câu hỏi lí thuyết về xu hướng biến đổi một số tính chất của nguyên tử các nguyên tố trong một chu kì và trong một nhóm - Phần 1</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_27', 'Bài 6 - Buổi 3. Câu hỏi lí thuyết về xu hướng biến đổi một số tính chất của nguyên tử các nguyên tố trong một chu kì và trong một nhóm - Phần 2', 'CHƯƠNG 2: BẢNG TUẦN HOÀN CÁC NGUYÊN TỐ HÓA HỌC', 'tai-lieu-bai-27.pdf', this, 26)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 6 - Buổi 3. Câu hỏi lí thuyết về xu hướng biến đổi một số tính chất của nguyên tử các nguyên tố trong một chu kì và trong một nhóm - Phần 2</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_28', 'Bài 6 - Buổi 4. Câu hỏi lí thuyết về xu hướng biến đổi một số tính chất của nguyên tử các nguyên tố trong một chu kì và trong một nhóm - Phần 3', 'CHƯƠNG 2: BẢNG TUẦN HOÀN CÁC NGUYÊN TỐ HÓA HỌC', 'tai-lieu-bai-28.pdf', this, 27)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 6 - Buổi 4. Câu hỏi lí thuyết về xu hướng biến đổi một số tính chất của nguyên tử các nguyên tố trong một chu kì và trong một nhóm - Phần 3</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_29', 'Bài 7 - Buổi 1. Xu hướng biến đổi thành phần và một số tính chất của hợp chất trong chu kì', 'CHƯƠNG 2: BẢNG TUẦN HOÀN CÁC NGUYÊN TỐ HÓA HỌC', 'tai-lieu-bai-29.pdf', this, 28)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 7 - Buổi 1. Xu hướng biến đổi thành phần và một số tính chất của hợp chất trong chu kì</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_30', 'Bài 7 - Buổi 2. Câu hỏi lí thuyết về xu hướng biến đổi thành phần và tính chất của hợp chất trong một chu kì', 'CHƯƠNG 2: BẢNG TUẦN HOÀN CÁC NGUYÊN TỐ HÓA HỌC', 'tai-lieu-bai-30.pdf', this, 29)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 7 - Buổi 2. Câu hỏi lí thuyết về xu hướng biến đổi thành phần và tính chất của hợp chất trong một chu kì</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_31', 'Bài 8 - Buổi 1. Câu hỏi về định luật tuần hoàn và ý nghĩa bảng tuần hoàn', 'CHƯƠNG 2: BẢNG TUẦN HOÀN CÁC NGUYÊN TỐ HÓA HỌC', 'tai-lieu-bai-31.pdf', this, 30)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 8 - Buổi 1. Câu hỏi về định luật tuần hoàn và ý nghĩa bảng tuần hoàn</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_32', 'Bài 8 - Buổi 2. Các dạng bài tập trọng tâm về Bảng tuần hoàn các nguyên tố hóa học', 'CHƯƠNG 2: BẢNG TUẦN HOÀN CÁC NGUYÊN TỐ HÓA HỌC', 'tai-lieu-bai-32.pdf', this, 31)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Bài 8 - Buổi 2. Các dạng bài tập trọng tâm về Bảng tuần hoàn các nguyên tố hóa học</p>
+                                <span class="doc-count"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg> 1 tài liệu</span>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_33', 'Ôn tập kiến thức chương 2 (Buổi 1)', 'CHƯƠNG 2: BẢNG TUẦN HOÀN CÁC NGUYÊN TỐ HÓA HỌC', 'tai-lieu-bai-33.pdf', this, 32)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Ôn tập kiến thức chương 2 (Buổi 1)</p>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_34', 'Ôn tập kiến thức chương 2 (Buổi 2)', 'CHƯƠNG 2: BẢNG TUẦN HOÀN CÁC NGUYÊN TỐ HÓA HỌC', 'tai-lieu-bai-34.pdf', this, 33)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Ôn tập kiến thức chương 2 (Buổi 2)</p>
+                            </div>
+                        </li>
+
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_35', 'Đề kiểm tra kiến thức chương 2', 'CHƯƠNG 2: BẢNG TUẦN HOÀN CÁC NGUYÊN TỐ HÓA HỌC', 'tai-lieu-bai-35.pdf', this, 34)">
+                            <div class="status-icon play">
+                                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"></polygon></svg>
+                            </div>
+                            <div class="lesson-text">
+                                <p class="lesson-title">Đề kiểm tra kiến thức chương 2</p>
+                            </div>
+                        </li>
+                    </ul>
+                </details>
+
+                <!-- CHƯƠNG 3 -->
+                <details class="chapter-accordion">
+                    <summary class="chapter-header">
+                        <div class="chapter-badge">03</div>
+                        <div class="chapter-info">
+                            <h4>CHƯƠNG 3: LIÊN KẾT HÓA HỌC</h4>
+                            <span>12 bài học</span>
+                        </div>
+                        <span class="arrow-icon"></span>
+                    </summary>
+                </details>
+
+                <!-- CHƯƠNG 4 -->
+                <details class="chapter-accordion">
+                    <summary class="chapter-header">
+                        <div class="chapter-badge">04</div>
+                        <div class="chapter-info">
+                            <h4>CHƯƠNG 4: PHẢN ỨNG OXI HÓA KHỬ</h4>
+                            <span>12 bài học</span>
+                        </div>
+                        <span class="arrow-icon"></span>
+                    </summary>
+                </details>
+
+                <!-- CHƯƠNG 5 -->
+                <details class="chapter-accordion">
+                    <summary class="chapter-header">
+                        <div class="chapter-badge">05</div>
+                        <div class="chapter-info">
+                            <h4>CHƯƠNG 5: NĂNG LƯỢNG HÓA HỌC</h4>
+                            <span>9 bài học</span>
+                        </div>
+                        <span class="arrow-icon"></span>
+                    </summary>
+                </details>
+
+                <!-- CHƯƠNG 6 -->
+                <details class="chapter-accordion">
+                    <summary class="chapter-header">
+                        <div class="chapter-badge">06</div>
+                        <div class="chapter-info">
+                            <h4>CHƯƠNG 6: TỐC ĐỘ PHẢN ỨNG</h4>
+                            <span>9 bài học</span>
+                        </div>
+                        <span class="arrow-icon"></span>
+                    </summary>
+                </details>
+
+                <!-- CHƯƠNG 7 -->
+                <details class="chapter-accordion">
+                    <summary class="chapter-header">
+                        <div class="chapter-badge">07</div>
+                        <div class="chapter-info">
+                            <h4>CHƯƠNG 7: NHÓM HALOGEN</h4>
+                            <span>13 bài học</span>
+                        </div>
+                        <span class="arrow-icon"></span>
+                    </summary>
+                </details>
+
             </div>
+        </aside>
+    </main>
 
-        </div>
-
-    </div>
-
-    <!-- MODAL ĐĂNG NHẬP / ĐĂNG KÝ -->
+    <!-- Modal Đăng nhập / Đăng ký -->
     <div id="authModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
         <div class="modal-box">
             <span class="close-btn" onclick="closeModal()">&times;</span>
-            
+            <div class="auth-header">
+                <h2 id="modal-title">Tài khoản học tập</h2>
+            </div>
             <div class="tab-header">
                 <button id="tab-login-btn" class="tab-btn active" onclick="switchTab('login')">Đăng nhập</button>
                 <button id="tab-register-btn" class="tab-btn" onclick="switchTab('register')">Đăng ký</button>
             </div>
 
-            <!-- FORM ĐĂNG NHẬP -->
+            <!-- Form Đăng nhập -->
             <form id="login-form" class="auth-form" onsubmit="handleAuth(event, 'login')">
                 <div class="form-group">
-                    <label for="login-email">Email</label>
+                    <label>Email</label>
                     <input type="email" id="login-email" required placeholder="nhapemail@gmail.com">
                 </div>
                 <div class="form-group">
-                    <label for="login-pass">Mật khẩu</label>
+                    <label>Mật khẩu</label>
                     <input type="password" id="login-pass" required placeholder="••••••••">
                 </div>
                 <button type="submit" class="submit-btn green-btn">Đăng nhập</button>
+
+                <div class="divider"><span>hoặc</span></div>
+                <button type="button" class="google-btn" onclick="loginWithGoogle()">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                    Đăng nhập bằng Google
+                </button>
             </form>
 
-            <!-- FORM ĐĂNG KÝ -->
+            <!-- Form Đăng ký -->
             <form id="register-form" class="auth-form hidden" onsubmit="handleAuth(event, 'register')">
                 <div class="form-group">
-                    <label for="register-fullname">Họ và tên</label>
+                    <label>Họ và tên</label>
                     <input type="text" id="register-fullname" required placeholder="Nguyễn Văn A">
                 </div>
                 <div class="form-group">
-                    <label for="register-email">Email</label>
-                    <input type="email" id="register-email" required placeholder="nhapemail@gmail.com">
+                    <label>Email</label>
+                    <input type="email" id="register-email" required placeholder="email@gmail.com">
                 </div>
                 <div class="form-group">
-                    <label for="register-pass">Mật khẩu</label>
-                    <input type="password" id="register-pass" required placeholder="••••••••">
+                    <label>Mật khẩu</label>
+                    <input type="password" id="register-pass" minlength="6" required placeholder="Tạo mật khẩu">
                 </div>
                 <button type="submit" class="submit-btn green-btn">Tạo tài khoản</button>
+
+                <div class="divider"><span>hoặc</span></div>
+                <button type="button" class="google-btn" onclick="loginWithGoogle()">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                    Đăng ký bằng Google
+                </button>
             </form>
-
-            <div class="divider">
-                <span>Hoặc</span>
-            </div>
-
-            <!-- NÚT ĐĂNG NHẬP GOOGLE -->
-            <button class="google-btn" onclick="loginWithGoogle()">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google Logo">
-                Tiếp tục với Google
-            </button>
         </div>
     </div>
 
-    <!-- Nhúng file JavaScript xử lý logic cuối body (dùng type="module" để kết nối Firebase) -->
     <script type="module" src="script.js"></script>
-
 </body>
 </html>
