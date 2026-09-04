@@ -8,6 +8,7 @@
 </head>
 <body>
 
+    <!-- Header Navbar -->
     <header class="navbar">
         <div class="logo">
             <span class="logo-icon">📚</span>
@@ -34,7 +35,9 @@
         <button id="logout-btn" class="btn btn-outline" style="display: none;" onclick="logout()">Đăng xuất</button>
     </header>
 
+    <!-- Main Content Layout -->
     <main class="course-container">
+        <!-- Cột Trái: Video, Sơ Đồ Tư Duy & Bảng Xếp Hạng -->
         <section class="left-content">
             <div class="video-wrapper">
                 <iframe id="main-player" 
@@ -56,6 +59,7 @@
                 </div>
             </div>
 
+            <!-- Khung Sơ Đồ Tư Duy -->
             <div class="card-section">
                 <div class="card-title"><span class="icon">🌿</span> Sơ đồ tư duy</div>
                 <div class="mindmap-placeholder">
@@ -63,6 +67,7 @@
                 </div>
             </div>
 
+            <!-- Khung Bảng Xếp Hạng Chuyên Cần -->
             <div class="card-section">
                 <div class="card-title"><span class="icon">🏆</span> Bảng xếp hạng chuyên cần</div>
                 
@@ -71,9 +76,11 @@
                 </div>
 
                 <div id="leaderboard-list" class="leaderboard-list">
-                    </div>
+                    <!-- Danh sách xếp hạng render động từ Firestore -->
+                </div>
             </div>
 
+            <!-- Khung Tài Liệu Bài Học -->
             <div class="document-card">
                 <h3>📑 Tài liệu bài học</h3>
                 <div class="doc-item">
@@ -84,6 +91,7 @@
             </div>
         </section>
 
+        <!-- Cột Phải: Tiến Độ & Nội Dung Khóa Học -->
         <aside class="right-sidebar">
             <div class="progress-card">
                 <div class="circle-progress">
@@ -102,6 +110,7 @@
                 </div>
                 <span class="sub-info">7 chương · 90 bài học</span>
 
+                <!-- CHƯƠNG 1 -->
                 <details class="chapter-accordion" open>
                     <summary class="chapter-header">
                         <div class="chapter-badge">01</div>
@@ -314,6 +323,7 @@
                     </ul>
                 </details>
 
+                <!-- CHƯƠNG 2 -->
                 <details class="chapter-accordion">
                     <summary class="chapter-header">
                         <div class="chapter-badge">02</div>
@@ -461,6 +471,7 @@
                     </ul>
                 </details>
 
+                <!-- CHƯƠNG 3 -->
                 <details class="chapter-accordion">
                     <summary class="chapter-header">
                         <div class="chapter-badge">03</div>
@@ -471,10 +482,60 @@
                         <span class="arrow-icon"></span>
                     </summary>
                 </details>
+
+                <!-- CHƯƠNG 4 -->
+                <details class="chapter-accordion">
+                    <summary class="chapter-header">
+                        <div class="chapter-badge">04</div>
+                        <div class="chapter-info">
+                            <h4>CHƯƠNG 4: PHẢN ỨNG OXI HÓA KHỬ</h4>
+                            <span>12 bài học</span>
+                        </div>
+                        <span class="arrow-icon"></span>
+                    </summary>
+                </details>
+
+                <!-- CHƯƠNG 5 -->
+                <details class="chapter-accordion">
+                    <summary class="chapter-header">
+                        <div class="chapter-badge">05</div>
+                        <div class="chapter-info">
+                            <h4>CHƯƠNG 5: NĂNG LƯỢNG HÓA HỌC</h4>
+                            <span>9 bài học</span>
+                        </div>
+                        <span class="arrow-icon"></span>
+                    </summary>
+                </details>
+
+                <!-- CHƯƠNG 6 -->
+                <details class="chapter-accordion">
+                    <summary class="chapter-header">
+                        <div class="chapter-badge">06</div>
+                        <div class="chapter-info">
+                            <h4>CHƯƠNG 6: TỐC ĐỘ PHẢN ỨNG</h4>
+                            <span>9 bài học</span>
+                        </div>
+                        <span class="arrow-icon"></span>
+                    </summary>
+                </details>
+
+                <!-- CHƯƠNG 7 -->
+                <details class="chapter-accordion">
+                    <summary class="chapter-header">
+                        <div class="chapter-badge">07</div>
+                        <div class="chapter-info">
+                            <h4>CHƯƠNG 7: NHÓM HALOGEN</h4>
+                            <span>13 bài học</span>
+                        </div>
+                        <span class="arrow-icon"></span>
+                    </summary>
+                </details>
+
             </div>
         </aside>
     </main>
 
+    <!-- Modal Đăng nhập / Đăng ký -->
     <div id="authModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
         <div class="modal-box">
             <span class="close-btn" onclick="closeModal()">&times;</span>
@@ -486,6 +547,7 @@
                 <button id="tab-register-btn" class="tab-btn" onclick="switchTab('register')">Đăng ký</button>
             </div>
 
+            <!-- Form Đăng nhập -->
             <form id="login-form" class="auth-form" onsubmit="handleAuth(event, 'login')">
                 <div class="form-group">
                     <label>Email</label>
@@ -504,6 +566,7 @@
                 </button>
             </form>
 
+            <!-- Form Đăng ký -->
             <form id="register-form" class="auth-form hidden" onsubmit="handleAuth(event, 'register')">
                 <div class="form-group">
                     <label>Họ và tên</label>
