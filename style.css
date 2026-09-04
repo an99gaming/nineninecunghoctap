@@ -1,15 +1,22 @@
+/* ==========================================
+   RESET & BASE STYLES
+   ========================================== */
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    margin: 0;
-    background: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #f8fafc;
     color: #334155;
+    line-height: 1.5;
 }
 
-/* NAVBAR */
+/* ==========================================
+   NAVBAR (THANH DIEU HUONG)
+   ========================================== */
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -17,19 +24,24 @@ body {
     background-color: #ffffff;
     padding: 12px 30px;
     border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .logo {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-weight: bold;
+    font-weight: 700;
     font-size: 18px;
     color: #00a651;
+    text-decoration: none;
 }
 
 .nav-links {
     display: flex;
+    align-items: center;
     gap: 20px;
 }
 
@@ -38,44 +50,71 @@ body {
     color: #475569;
     font-size: 14px;
     font-weight: 500;
+    transition: color 0.2s;
+}
+
+.nav-links a:hover {
+    color: #00a651;
 }
 
 .badge {
     font-size: 9px;
     padding: 2px 5px;
     border-radius: 4px;
-    font-weight: bold;
+    font-weight: 700;
+    margin-left: 4px;
 }
 
 .badge-hot {
     background-color: #ffc107;
-    color: #000;
+    color: #000000;
 }
 
 .auth-buttons {
     display: flex;
+    align-items: center;
     gap: 10px;
+}
+
+.user-display-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #00a651;
+    margin-right: 8px;
 }
 
 .btn {
     padding: 8px 16px;
     border-radius: 6px;
     font-weight: 600;
+    font-size: 14px;
     cursor: pointer;
+    transition: all 0.2s ease;
 }
 
 .btn-primary {
     background: #00a651;
-    color: #fff;
+    color: #ffffff;
     border: none;
+}
+
+.btn-primary:hover {
+    background: #008d44;
 }
 
 .btn-outline {
     background: transparent;
     border: 1px solid #cbd5e1;
+    color: #334155;
 }
 
-/* LAYOUT CONTAINER */
+.btn-outline:hover {
+    background: #f1f5f9;
+}
+
+/* ==========================================
+   LAYOUT CONTAINER
+   ========================================== */
 .course-container {
     display: flex;
     gap: 24px;
@@ -92,15 +131,22 @@ body {
 .right-sidebar {
     width: 360px;
     flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
+/* ==========================================
+   VIDEO PLAYER & HEADER BÀI HỌC
+   ========================================== */
 .video-wrapper {
     position: relative;
     width: 100%;
-    padding-bottom: 56.25%;
+    padding-bottom: 56.25%; /* Tỷ lệ 16:9 chuẩn HD */
     border-radius: 12px;
     overflow: hidden;
-    background: #000;
+    background: #000000;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .video-wrapper iframe {
@@ -109,9 +155,14 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
+    border: none;
 }
 
-.lesson-header, .card-section, .document-card, .progress-card, .playlist-card {
+.lesson-header, 
+.card-section, 
+.document-card, 
+.progress-card, 
+.playlist-card {
     background: #ffffff;
     padding: 20px;
     border-radius: 12px;
@@ -123,6 +174,15 @@ body {
     color: #00a651;
     font-size: 13px;
     font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.lesson-header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-top: 6px;
 }
 
 .nav-buttons {
@@ -139,6 +199,12 @@ body {
     background: #ffffff;
     cursor: pointer;
     font-weight: 600;
+    font-size: 13px;
+    transition: all 0.2s;
+}
+
+.btn-nav:hover {
+    background: #f8fafc;
 }
 
 .btn-next {
@@ -147,10 +213,17 @@ body {
     border: none;
 }
 
-/* SƠ ĐỒ TƯ DUY */
+.btn-next:hover {
+    background: #008d44;
+}
+
+/* ==========================================
+   SƠ ĐỒ TƯ DUY & TÀI LIỆU
+   ========================================== */
 .card-title {
     font-weight: 700;
     font-size: 16px;
+    color: #0f172a;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -160,20 +233,25 @@ body {
 .mindmap-placeholder {
     border: 1px dashed #cbd5e1;
     border-radius: 8px;
-    padding: 24px;
+    padding: 28px;
     text-align: center;
     color: #94a3b8;
     font-size: 14px;
+    background: #f8fafc;
 }
 
-/* BẢNG XẾP HẠNG */
+/* ==========================================
+   BẢNG XẾP HẠNG REALTIME
+   ========================================== */
 .user-rank-banner {
     background: #ecfdf5;
     color: #065f46;
     padding: 10px 16px;
     border-radius: 8px;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 600;
     margin-bottom: 16px;
+    border: 1px solid #a7f3d0;
 }
 
 .leaderboard-list {
@@ -186,7 +264,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 12px;
+    padding: 8px 12px;
     border-radius: 8px;
     transition: background 0.2s;
 }
@@ -203,7 +281,7 @@ body {
 .user-info {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
 .rank-badge {
@@ -217,9 +295,9 @@ body {
     font-size: 12px;
 }
 
-.rank-1 { background: #eab308; color: #fff; }
-.rank-2 { background: #94a3b8; color: #fff; }
-.rank-3 { background: #d97706; color: #fff; }
+.rank-1 { background: #eab308; color: #ffffff; }
+.rank-2 { background: #94a3b8; color: #ffffff; }
+.rank-3 { background: #d97706; color: #ffffff; }
 .rank-badge.default { background: #f1f5f9; color: #64748b; }
 
 .avatar-box {
@@ -241,11 +319,12 @@ body {
 
 .you-badge {
     background: #eab308;
-    color: #fff;
+    color: #ffffff;
     font-size: 10px;
     padding: 2px 6px;
     border-radius: 4px;
     font-weight: 700;
+    margin-left: 4px;
 }
 
 .points {
@@ -254,7 +333,13 @@ body {
     font-size: 14px;
 }
 
-/* TIẾN ĐỘ & ACCORDION */
+/* ==========================================
+   TIẾN ĐỘ HỌC TẬP & DANH SÁCH BÀI HỌC
+   ========================================== */
+.playlist-card {
+    margin-top: 0;
+}
+
 .progress-card {
     margin-top: 0;
     display: flex;
@@ -271,14 +356,27 @@ body {
     align-items: center;
     justify-content: center;
     font-weight: bold;
+    font-size: 13px;
     color: #00a651;
     background: #ecfdf5;
+    flex-shrink: 0;
+}
+
+.progress-info {
+    font-size: 13px;
+    color: #475569;
 }
 
 .playlist-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 12px;
+}
+
+.playlist-header h3 {
+    font-size: 16px;
+    font-weight: 700;
 }
 
 .expand-all {
@@ -294,40 +392,52 @@ body {
 }
 
 .chapter-accordion {
-    background: #f8fafc;
+    background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 8px;
     margin-top: 10px;
+    overflow: hidden;
 }
 
 .chapter-header {
     display: flex;
     align-items: center;
     padding: 12px;
+    background: #f8fafc;
     cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+    border-bottom: 1px solid #e2e8f0;
 }
 
 .chapter-badge {
     background: #ecfdf5;
     color: #00a651;
     font-weight: 700;
-    padding: 4px 8px;
+    font-size: 12px;
+    padding: 3px 8px;
     border-radius: 4px;
     margin-right: 10px;
 }
 
 .lesson-list {
     list-style: none;
-    padding: 6px;
+    padding: 4px;
     margin: 0;
 }
 
 .lesson-item {
     display: flex;
     align-items: center;
-    padding: 8px 10px;
+    padding: 10px 12px;
     border-radius: 6px;
     cursor: pointer;
+    transition: background 0.2s;
+}
+
+.lesson-item:hover {
+    background: #f1f5f9;
 }
 
 .lesson-item.active {
@@ -336,24 +446,31 @@ body {
     font-weight: 600;
 }
 
+.lesson-text p {
+    font-size: 13px;
+    margin: 0;
+}
+
 .status-icon {
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 11px;
-    margin-right: 8px;
+    font-weight: 700;
+    margin-right: 10px;
+    flex-shrink: 0;
 }
 
 .status-icon.completed {
-    background: #e0f2fe;
-    color: #0284c7;
+    background: #00a651;
+    color: #ffffff;
 }
 
 .status-icon.play {
-    border: 1px solid #00a651;
+    border: 2px solid #00a651;
     color: #00a651;
 }
 
@@ -508,7 +625,7 @@ body {
     display: flex;
     align-items: center;
     text-align: center;
-    margin: 4px 0;
+    margin: 12px 0;
     color: #94a3b8;
     font-size: 13px;
 }
@@ -550,4 +667,14 @@ body {
     background: #f8fafc;
     border-color: #94a3b8;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* RESPONSIVE DESIGN (GIAO DIỆN DI ĐỘNG) */
+@media (max-width: 900px) {
+    .course-container {
+        flex-direction: column;
+    }
+    .right-sidebar {
+        width: 100%;
+    }
 }
