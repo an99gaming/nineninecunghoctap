@@ -13,6 +13,7 @@ import {
     getFirestore, 
     doc, 
     setDoc, 
+    getDoc,
     updateDoc, 
     increment, 
     collection, 
@@ -21,6 +22,9 @@ import {
     orderBy 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+// ==========================================
+// CẤU HÌNH FIREBASE
+// ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyCt8Qzt5CgSl1N7KFOBiB2f_Yl_VTKCH-w",
   authDomain: "web-nine-nien-hoc-tap.firebaseapp.com",
@@ -36,6 +40,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let currentUser = null;
+let currentLessonIndex = 0;
 
 // ==========================================
 // 1. LẮNG NGHE & RENDER BẢNG XẾP HẠNG THỰC TẾ
@@ -45,8 +50,8 @@ function listenToLeaderboard() {
 
     onSnapshot(q, (snapshot) => {
         const usersList = [];
-        snapshot.forEach((doc) => {
-            usersList.push({ id: doc.id, ...doc.data() });
+        snapshot.forEach((docSnap) => {
+            usersList.push({ id: docSnap.id, ...docSnap.data() });
         });
         renderLeaderboardUI(usersList);
     });
@@ -84,7 +89,7 @@ function renderLeaderboardUI(usersList) {
                 <span class="user-name">${item.name || "Học viên"}</span>
                 ${isMe ? '<span class="you-badge">Bạn</span>' : ''}
             </div>
-            <div class="points">${item.points || 0} điểm</div>
+            <div class="points">⚡ ${item.points || 0} p</div>
         `;
 
         listContainer.appendChild(row);
@@ -111,14 +116,14 @@ async function addPointsForWatching() {
 }
 
 // ==========================================
-// 3. TIẾN ĐỘ KHÓA HỌC
+// 3. TIẾN ĐỘ KHÓA HỌC & LOCAL STORAGE
 // ==========================================
 const totalLessons = 90;
 let completedLessons = new Set(JSON.parse(localStorage.getItem('completed_lessons') || "[]"));
 
 function updateProgressUI() {
     const completedCount = completedLessons.size || 7;
-    const remainingCount = totalLessons - completedCount;
+    const remainingCount = Math.max(0, totalLessons - completedCount);
     const percentage = Math.round((completedCount / totalLessons) * 100);
 
     const circleText = document.querySelector('.circle-progress span');
@@ -139,10 +144,8 @@ function markLessonAsCompleted(lessonTitle) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', updateProgressUI);
-
 // ==========================================
-// 4. YOUTUBE IFRAME API
+// 4. YOUTUBE IFRAME API & EVENT HANDLING
 // ==========================================
 let player;
 window.onYouTubeIframeAPIReady = function() {
@@ -159,34 +162,51 @@ if (!window.YT) {
 }
 
 function onPlayerStateChange(event) {
-    if (event.data === 0) { // Khi video phát xong
+    if (event.data === 0) { // Khi video phát xong (Ended)
         const activeLesson = document.querySelector('.lesson-item.active');
         if (activeLesson) {
             const statusIcon = activeLesson.querySelector('.status-icon');
             if (statusIcon) {
                 statusIcon.className = 'status-icon completed';
-                statusIcon.innerText = '✓';
+                statusIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
             }
-            const lessonTitle = activeLesson.querySelector('.lesson-text p')?.innerText || 'lesson';
+            const lessonTitle = activeLesson.querySelector('.lesson-title')?.innerText || 'lesson';
             markLessonAsCompleted(lessonTitle);
+            
+            // Tự động chuyển bài kế tiếp
+            window.nextLesson();
         }
     }
 }
 
 // ==========================================
-// 5. ĐỔI BÀI & BẤM NEXT
+// 5. ĐỔI BÀI & ĐIỀU HƯỚNG BÀI HỌC
 // ==========================================
-window.changeVideo = function(videoId, title, chapterName, docLink, element) {
+window.changeVideo = function(videoId, title, chapterName, docLink, element, index) {
     const playerElem = document.getElementById('main-player');
-    if (playerElem && videoId) {
+    if (playerElem && videoId && !videoId.startsWith('ID_YOUTUBE')) {
         playerElem.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&autoplay=1`;
     }
 
     const titleElem = document.getElementById('video-title');
     if (titleElem && title) titleElem.innerText = title;
 
+    const chapterElem = document.getElementById('chapter-tag');
+    if (chapterElem && chapterName) chapterElem.innerText = chapterName;
+
+    if (docLink) {
+        const docTitle = document.getElementById('doc-title');
+        const docDownload = document.getElementById('doc-link');
+        if (docTitle) docTitle.innerText = `${title} - File đề.pdf`;
+        if (docDownload) docDownload.href = docLink;
+    }
+
     document.querySelectorAll('.lesson-item').forEach(item => item.classList.remove('active'));
     if (element) element.classList.add('active');
+
+    if (typeof index === 'number') {
+        currentLessonIndex = index;
+    }
 };
 
 window.nextLesson = function() {
@@ -195,12 +215,12 @@ window.nextLesson = function() {
     
     if (currentIndex !== -1) {
         const currentLesson = lessons[currentIndex];
-        const currentTitle = currentLesson.querySelector('.lesson-text p')?.innerText || `lesson_${currentIndex}`;
+        const currentTitle = currentLesson.querySelector('.lesson-title')?.innerText || `lesson_${currentIndex}`;
         
         const statusIcon = currentLesson.querySelector('.status-icon');
         if (statusIcon) {
             statusIcon.className = 'status-icon completed';
-            statusIcon.innerText = '✓';
+            statusIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
         }
         markLessonAsCompleted(currentTitle);
 
@@ -235,11 +255,12 @@ window.handleAuth = async function(e, type) {
             await setDoc(doc(db, "users", res.user.uid), {
                 name: name,
                 email: email,
-                points: 10
+                points: 10,
+                role: "student"
             });
 
             alert("Đăng ký tài khoản thành công!");
-            closeModal();
+            window.closeModal();
         } catch (err) {
             console.error("Lỗi đăng ký:", err.code);
             switch (err.code) {
@@ -265,7 +286,7 @@ window.handleAuth = async function(e, type) {
         try {
             await signInWithEmailAndPassword(auth, email, pass);
             alert("Đăng nhập thành công!");
-            closeModal();
+            window.closeModal();
         } catch (err) {
             console.error("Lỗi đăng nhập:", err.code);
             switch (err.code) {
@@ -282,7 +303,7 @@ window.handleAuth = async function(e, type) {
 };
 
 // ==========================================
-// 7. ĐĂNG NHẬP BẰNG GOOGLE
+// 7. ĐĂNG NHẬP BẰNG GOOGLE (AN TOÀN BẢO TỒN ĐIỂM)
 // ==========================================
 window.loginWithGoogle = async function() {
     const provider = new GoogleAuthProvider();
@@ -290,15 +311,21 @@ window.loginWithGoogle = async function() {
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
 
-        // Lưu / Cập nhật thông tin vào Firestore (Sử dụng merge: true để giữ lại điểm cũ nếu có)
-        await setDoc(doc(db, "users", user.uid), {
-            name: user.displayName || "Học viên Google",
-            email: user.email,
-            points: 10
-        }, { merge: true });
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        // Nếu là người dùng mới mới khởi tạo 10 điểm, nếu cũ thì giữ nguyên
+        if (!userSnap.exists()) {
+            await setDoc(userRef, {
+                name: user.displayName || "Học viên Google",
+                email: user.email,
+                points: 10,
+                role: "student"
+            });
+        }
 
         alert("Đăng nhập bằng Google thành công!");
-        closeModal();
+        window.closeModal();
     } catch (error) {
         console.error("Lỗi Google Auth:", error);
         alert("Đăng nhập bằng Google thất bại: " + error.message);
@@ -349,24 +376,40 @@ window.logout = function() {
 };
 
 // ==========================================
-// 9. THEO DÕI TRẠNG THÁI TÀI KHOẢN (REALTIME)
+// 9. THEO DÕI TRẠNG THÁI TÀI KHOẢN & KHỞI TẠO
 // ==========================================
-onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, async (user) => {
     currentUser = user;
     const userDisplay = document.getElementById('user-display');
     const authBtns = document.getElementById('auth-btns');
     const logoutBtn = document.getElementById('logout-btn');
+    const adminBadge = document.getElementById('admin-badge');
 
     if (user) {
         if (authBtns) authBtns.style.display = 'none';
         if (logoutBtn) logoutBtn.style.display = 'inline-block';
-        if (userDisplay) userDisplay.innerText = `Chào: ${user.displayName || user.email}`;
+        
+        const userDoc = await getDoc(doc(db, "users", user.uid));
+        const userData = userDoc.data();
+        const displayName = userData?.name || user.displayName || user.email;
+
+        if (userDisplay) userDisplay.innerText = `Chào: ${displayName}`;
+        
+        if (userData?.role === 'admin' && adminBadge) {
+            adminBadge.style.display = 'inline-block';
+        } else if (adminBadge) {
+            adminBadge.style.display = 'none';
+        }
     } else {
         if (authBtns) authBtns.style.display = 'flex';
         if (logoutBtn) logoutBtn.style.display = 'none';
         if (userDisplay) userDisplay.innerText = '';
+        if (adminBadge) adminBadge.style.display = 'none';
     }
 
-    // Kích hoạt lắng nghe Bảng xếp hạng Realtime từ database
+    // Lắng nghe Bảng xếp hạng Realtime
     listenToLeaderboard();
 });
+
+// Khởi chạy cập nhật tiến độ lần đầu
+document.addEventListener('DOMContentLoaded', updateProgressUI);
