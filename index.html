@@ -1,220 +1,223 @@
-// Import các thư viện Firebase cần thiết
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { 
-    getAuth, 
-    signInWithEmailAndPassword, 
-    createUserWithEmailAndPassword, 
-    GoogleAuthProvider, 
-    signInWithPopup, 
-    signOut, 
-    onAuthStateChanged 
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { 
-    getFirestore, 
-    doc, 
-    setDoc, 
-    getDoc, 
-    getDocs, 
-    collection, 
-    query, 
-    orderBy, 
-    limit 
-} from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Góc Học Tập Cá Nhân</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-// ⚠️ ĐIỀN THÔNG TIN FIREBASE CONFIG CỦA BẠN VÀO ĐÂY (NẾU DÙNG FIREBASE)
-const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
-};
+    <!-- Header Navbar -->
+    <header class="navbar">
+        <div class="logo">
+            <span class="logo-icon">📚</span>
+            <span class="logo-text">Góc Học Tập</span>
+            <span id="admin-badge" class="badge badge-hot" style="display: none; margin-left: 8px;">ADMIN</span>
+        </div>
 
-// Khởi tạo Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+        <nav class="nav-links">
+            <a href="#">Trang chủ</a>
+            <a href="#">Khóa học</a>
+            <a href="#" class="has-badge">Thi thử <span class="badge badge-hot">HOT</span></a>
+            <a href="#">Tài liệu</a>
+            <a href="#">Tin tức ▾</a>
+            <a href="#">Cộng đồng</a>
+            <a href="#" class="has-badge">Lớp của tôi <span class="badge badge-vip">👑</span></a>
+        </nav>
 
-let currentUser = null;
-let player = null;
-let watchedVideos = new Set(); // Theo dõi video đã cộng điểm trong phiên
+        <div id="user-display" style="font-weight: bold; color: #00a651; margin-right: 10px;"></div>
 
-// --- YOUTUBE IFRAME API ---
-// Tự động lắng nghe sự kiện xem hết video
-window.onYouTubeIframeAPIReady = function() {
-    player = new YT.Player('main-player', {
-        events: {
-            'onStateChange': onPlayerStateChange
-        }
-    });
-};
+        <div id="auth-btns" class="auth-buttons">
+            <button class="btn btn-primary" onclick="openModal('register')">Đăng ký học</button>
+            <button class="btn btn-outline" onclick="openModal('login')">➜ Đăng nhập</button>
+        </div>
+        <button id="logout-btn" class="btn btn-outline" style="display: none;" onclick="logout()">Đăng xuất</button>
+    </header>
 
-// Tải script YouTube API nếu chưa có
-if (!window.YT) {
-    const tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-}
-
-// Xử lý khi video kết thúc (State = 0 / YT.PlayerState.ENDED)
-async function onPlayerStateChange(event) {
-    if (event.data === YT.PlayerState.ENDED) {
-        const currentVideoUrl = document.getElementById('main-player').src;
-        
-        // Tránh cộng điểm trùng lặp nhiều lần cho cùng 1 video trong 1 lần xem
-        if (!watchedVideos.has(currentVideoUrl)) {
-            watchedVideos.add(currentVideoUrl);
-            await addPointsToUser(10); // Cộng 10 điểm khi xem hết
-        }
-    }
-}
-
-// --- HÀM CỘNG ĐIỂM & LƯU TRỮ KHÔNG BỊ MẤT ---
-async function addPointsToUser(pointsToAdd) {
-    // 1. Lấy dữ liệu điểm hiện tại
-    let currentScore = getLocalScore();
-    let updatedScore = currentScore + pointsToAdd;
-
-    // 2. Lưu vào LocalStorage (Đảm bảo reload không bị mất)
-    saveLocalScore(updatedScore);
-
-    // 3. Lưu lên Firebase Firestore (Nếu đã đăng nhập)
-    if (currentUser) {
-        try {
-            const userRef = doc(db, "leaderboard", currentUser.uid);
-            await setDoc(userRef, {
-                uid: currentUser.uid,
-                name: currentUser.displayName || currentUser.email.split('@')[0],
-                score: updatedScore,
-                updatedAt: new Date()
-            }, { merge: true });
-        } catch (error) {
-            console.error("Lỗi khi lưu điểm lên Firestore:", error);
-        }
-    }
-
-    // 4. Render lại giao diện Bảng xếp hạng ngay lập tức
-    await loadLeaderboard();
-    alert(`🎉 Bạn đã hoàn thành bài học và nhận được +${pointsToAdd} điểm!`);
-}
-
-// Helper: Quản lý LocalStorage
-function getLocalScore() {
-    return parseInt(localStorage.getItem('user_score') || '0', 10);
-}
-
-function saveLocalScore(score) {
-    localStorage.setItem('user_score', score.toString());
-}
-
-// --- HÀM LOAD BẢNG XẾP HẠNG KHI RESET/RELOAD TRANG ---
-async function loadLeaderboard() {
-    const leaderboardList = document.getElementById('leaderboard-list');
-    const myRankText = document.getElementById('my-rank-text');
-    if (!leaderboardList) return;
-
-    let leaderboardData = [];
-
-    // Thử lấy danh sách xếp hạng từ Firestore
-    try {
-        const q = query(collection(db, "leaderboard"), orderBy("score", "desc"), limit(10));
-        const querySnapshot = await getDocs(q);
-        
-        querySnapshot.forEach((doc) => {
-            leaderboardData.push(doc.data());
-        });
-    } catch (e) {
-        console.warn("Không thể tải Firestore, chuyển sang chế độ LocalStorage:", e);
-    }
-
-    // Nếu không có dữ liệu Firebase, hiển thị dữ liệu người dùng hiện tại từ LocalStorage
-    if (leaderboardData.length === 0) {
-        const localScore = getLocalScore();
-        const userName = currentUser ? (currentUser.displayName || currentUser.email) : "Liongamersky Titok";
-        
-        if (localScore > 0) {
-            leaderboardData.push({
-                name: userName,
-                score: localScore,
-                isCurrent: true
-            });
-        }
-    }
-
-    // Xóa danh sách cũ
-    leaderboardList.innerHTML = "";
-
-    if (leaderboardData.length === 0) {
-        leaderboardList.innerHTML = `<p style="padding: 10px; color: #666;">Chưa có dữ liệu xếp hạng.</p>`;
-        if (myRankText) myRankText.innerText = "Chưa có vị trí xếp hạng";
-        return;
-    }
-
-    // Render danh sách mới ra HTML
-    leaderboardData.forEach((item, index) => {
-        const rank = index + 1;
-        const isUser = currentUser && item.uid === currentUser.uid;
-        
-        const itemHTML = `
-            <div class="leaderboard-item ${isUser ? 'highlight' : ''}" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; margin-bottom: 6px; background: #fffbe6; border-radius: 8px;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span class="rank-number" style="background: #ffec3d; width: 24px; height: 24px; display: inline-flex; justify-content: center; align-items: center; border-radius: 50%; font-weight: bold;">${rank}</span>
-                    <span class="avatar-icon" style="background: #d9f7be; padding: 4px 8px; border-radius: 50%; font-weight: bold;">${item.name.charAt(0).toUpperCase()}</span>
-                    <strong>${item.name}</strong>
-                    ${isUser ? '<span class="badge" style="background: #gold; font-size: 11px; padding: 2px 6px; border-radius: 4px;">Bạn</span>' : ''}
-                </div>
-                <div style="font-weight: bold; color: #52c41a;">${item.score} điểm</div>
+    <!-- Main Content Layout -->
+    <main class="course-container">
+        <!-- Cột Trái: Video, Sơ Đồ Tư Duy & Bảng Xếp Hạng -->
+        <section class="left-content">
+            <div class="video-wrapper">
+                <iframe id="main-player" 
+                        src="https://www.youtube.com/embed/rBUEpdM8z9k?enablejsapi=1" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                </iframe>
             </div>
-        `;
-        leaderboardList.innerHTML += itemHTML;
 
-        if (isUser || index === 0) {
-            if (myRankText) myRankText.innerText = `Vị trí của bạn: Hạng ${rank}/${leaderboardData.length} · Cố lên nhé!`;
-        }
-    });
-}
+            <div class="lesson-header">
+                <span class="chapter-tag" id="chapter-tag">CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ</span>
+                <h1 id="video-title">Bài 1 - Buổi 1. Thành phần nguyên tử</h1>
+                <p class="view-count">👁️ 29 lượt xem</p>
+                
+                <div class="nav-buttons">
+                    <button class="btn-nav btn-prev" onclick="prevLesson()">← Bài trước</button>
+                    <button class="btn-nav btn-next" onclick="nextLesson()">Bài tiếp theo →</button>
+                </div>
+            </div>
 
-// --- THEO DÕI TRẠNG THÁI ĐĂNG NHẬP ---
-onAuthStateChanged(auth, async (user) => {
-    const userDisplay = document.getElementById('user-display');
-    const authBtns = document.getElementById('auth-btns');
-    const logoutBtn = document.getElementById('logout-btn');
+            <!-- Khung Sơ Đồ Tư Duy -->
+            <div class="card-section">
+                <div class="card-title"><span class="icon">🌿</span> Sơ đồ tư duy</div>
+                <div class="mindmap-placeholder">
+                    <span class="node-icon">🔗</span> Sơ đồ tư duy của buổi học sẽ được tải lên tại đây.
+                </div>
+            </div>
 
-    if (user) {
-        currentUser = user;
-        if (userDisplay) userDisplay.innerText = user.displayName || user.email;
-        if (authBtns) authBtns.style.display = 'none';
-        if (logoutBtn) logoutBtn.style.display = 'inline-block';
-    } else {
-        currentUser = null;
-        if (userDisplay) userDisplay.innerText = '';
-        if (authBtns) authBtns.style.display = 'flex';
-        if (logoutBtn) logoutBtn.style.display = 'none';
-    }
+            <!-- Khung Bảng Xếp Hạng Chuyên Cần -->
+            <div class="card-section">
+                <div class="card-title"><span class="icon">🏆</span> Bảng xếp hạng chuyên cần</div>
+                
+                <div class="user-rank-banner">
+                    <span class="lightning">⚡</span> <span id="my-rank-text">Đang tải vị trí xếp hạng...</span> 💪
+                </div>
 
-    // Tải lại bảng xếp hạng khi đổi trạng thái đăng nhập
-    await loadLeaderboard();
-});
+                <div id="leaderboard-list" class="leaderboard-list">
+                    <!-- Danh sách xếp hạng render động từ Firestore -->
+                </div>
+            </div>
 
-// --- LẮNG NGHE SỰ KIỆN TẢI TRANG (RELOAD / RESET) ---
-document.addEventListener('DOMContentLoaded', () => {
-    // Tự động nạp lại Bảng xếp hạng từ LocalStorage / Firebase khi reset trang
-    loadLeaderboard();
-});
+            <!-- Khung Tài Liệu Bài Học -->
+            <div class="document-card">
+                <h3>📑 Tài liệu bài học</h3>
+                <div class="doc-item">
+                    <span class="doc-icon">📄</span>
+                    <span id="doc-title" class="doc-name">Bài 1 - Buổi 1. Thành phần nguyên tử - File đề.pdf</span>
+                    <a id="doc-link" href="#" class="btn-download" download>📥 Tải về</a>
+                </div>
+            </div>
+        </section>
 
-// Gán các hàm toàn cục cho Modal & Navigation HTML
-window.openModal = function(type) {
-    const modal = document.getElementById('authModal');
-    if (modal) modal.style.display = 'flex';
-};
+        <!-- Cột Phải: Tiến Độ & Nội Dung Khóa Học -->
+        <aside class="right-sidebar">
+            <div class="progress-card">
+                <div class="circle-progress">
+                    <span>8%</span>
+                </div>
+                <div class="progress-info">
+                    <h4>Tiến độ khóa học</h4>
+                    <p>Đã học <strong>7/90</strong> bài · còn 83 bài</p>
+                </div>
+            </div>
 
-window.closeModal = function() {
-    const modal = document.getElementById('authModal');
-    if (modal) modal.style.display = 'none';
-};
+            <div class="playlist-card">
+                <div class="playlist-header">
+                    <h3>📖 Nội dung khóa học</h3>
+                    <a href="#" class="expand-all">Mở rộng tất cả</a>
+                </div>
+                <span class="sub-info">7 chương · 90 bài học</span>
 
-window.logout = function() {
-    signOut(auth);
-};
+                <details class="chapter-accordion" open>
+                    <summary class="chapter-header">
+                        <div class="chapter-badge">01</div>
+                        <div class="chapter-info">
+                            <h4>CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ</h4>
+                            <span>21 bài học</span>
+                        </div>
+                        <span class="arrow-icon">❯</span>
+                    </summary>
+                    <ul class="lesson-list">
+                        <li class="lesson-item active" onclick="changeVideo('rBUEpdM8z9k', 'Bài 1 - Buổi 1. Thành phần nguyên tử', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-1.pdf', this)">
+                            <span class="status-icon completed">✓</span>
+                            <div class="lesson-text">
+                                <p>Bài 1 - Buổi 1. Thành phần nguyên tử</p>
+                            </div>
+                        </li>
+                        <li class="lesson-item" onclick="changeVideo('ID_YOUTUBE_BAI_2', 'Bài 1 - Buổi 2. Câu hỏi trắc nghiệm nhiều phương án lựa chọn', 'CHƯƠNG 1: CẤU TẠO NGUYÊN TỬ', 'tai-lieu-bai-2.pdf', this)">
+                            <span class="status-icon play">▶</span>
+                            <div class="lesson-text">
+                                <p>Bài 1 - Buổi 2. Câu hỏi trắc nghiệm nhiều phương án lựa chọn</p>
+                            </div>
+                        </li>
+                    </ul>
+                </details>
+
+                <details class="chapter-accordion">
+                    <summary class="chapter-header">
+                        <div class="chapter-badge">02</div>
+                        <div class="chapter-info">
+                            <h4>CHƯƠNG 2: BẢNG TUẦN HOÀN CÁC NGUYÊN TỐ HÓA HỌC</h4>
+                            <span>14 bài học</span>
+                        </div>
+                        <span class="arrow-icon">❯</span>
+                    </summary>
+                </details>
+
+                <details class="chapter-accordion">
+                    <summary class="chapter-header">
+                        <div class="chapter-badge">03</div>
+                        <div class="chapter-info">
+                            <h4>CHƯƠNG 3: LIÊN KẾT HÓA HỌC</h4>
+                            <span>12 bài học</span>
+                        </div>
+                        <span class="arrow-icon">❯</span>
+                    </summary>
+                </details>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Modal Đăng nhập / Đăng ký -->
+    <div id="authModal" class="modal-overlay" onclick="closeModalOnOverlay(event)">
+        <div class="modal-box">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <div class="auth-header">
+                <h2 id="modal-title">Tài khoản học tập</h2>
+            </div>
+            <div class="tab-header">
+                <button id="tab-login-btn" class="tab-btn active" onclick="switchTab('login')">Đăng nhập</button>
+                <button id="tab-register-btn" class="tab-btn" onclick="switchTab('register')">Đăng ký</button>
+            </div>
+
+            <!-- Form Đăng nhập -->
+            <form id="login-form" class="auth-form" onsubmit="handleAuth(event, 'login')">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="login-email" required placeholder="nhapemail@gmail.com">
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu</label>
+                    <input type="password" id="login-pass" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="submit-btn green-btn">Đăng nhập</button>
+
+                <!-- Thêm nút Đăng nhập bằng Google -->
+                <div class="divider"><span>hoặc</span></div>
+                <button type="button" class="google-btn" onclick="loginWithGoogle()">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                    Đăng nhập bằng Google
+                </button>
+            </form>
+
+            <!-- Form Đăng ký -->
+            <form id="register-form" class="auth-form hidden" onsubmit="handleAuth(event, 'register')">
+                <div class="form-group">
+                    <label>Họ và tên</label>
+                    <input type="text" id="register-fullname" required placeholder="Nguyễn Văn A">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="register-email" required placeholder="email@gmail.com">
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu</label>
+                    <input type="password" id="register-pass" minlength="6" required placeholder="Tạo mật khẩu">
+                </div>
+                <button type="submit" class="submit-btn green-btn">Tạo tài khoản</button>
+
+                <!-- Thêm nút Đăng ký bằng Google -->
+                <div class="divider"><span>hoặc</span></div>
+                <button type="button" class="google-btn" onclick="loginWithGoogle()">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+                    Đăng ký bằng Google
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
