@@ -31,7 +31,6 @@ body {
 .nav-links {
     display: flex;
     gap: 20px;
-    align-items: center;
 }
 
 .nav-links a {
@@ -55,14 +54,7 @@ body {
 
 .auth-buttons {
     display: flex;
-    align-items: center;
     gap: 10px;
-}
-
-.user-display {
-    font-size: 14px;
-    font-weight: 600;
-    color: #00a651;
 }
 
 .btn {
@@ -70,7 +62,6 @@ body {
     border-radius: 6px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
 }
 
 .btn-primary {
@@ -79,28 +70,9 @@ body {
     border: none;
 }
 
-.btn-primary:hover {
-    background: #008d44;
-}
-
 .btn-outline {
     background: transparent;
     border: 1px solid #cbd5e1;
-    color: #475569;
-}
-
-.btn-outline:hover {
-    background: #f1f5f9;
-}
-
-.btn-danger {
-    background: #ef4444;
-    color: #ffffff;
-    border: none;
-}
-
-.btn-danger:hover {
-    background: #dc2626;
 }
 
 /* LAYOUT CONTAINER */
@@ -137,7 +109,6 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    border: none;
 }
 
 .lesson-header, .card-section, .document-card, .progress-card, .playlist-card {
@@ -168,21 +139,12 @@ body {
     background: #ffffff;
     cursor: pointer;
     font-weight: 600;
-    transition: background 0.2s;
-}
-
-.btn-nav:hover {
-    background: #f1f5f9;
 }
 
 .btn-next {
     background: #00a651;
     color: #ffffff;
     border: none;
-}
-
-.btn-next:hover {
-    background: #008d44;
 }
 
 /* SƠ ĐỒ TƯ DUY */
@@ -311,13 +273,6 @@ body {
     font-weight: bold;
     color: #00a651;
     background: #ecfdf5;
-    flex-shrink: 0;
-}
-
-.progress-info p {
-    margin: 0;
-    font-size: 14px;
-    color: #475569;
 }
 
 .playlist-header {
@@ -373,22 +328,12 @@ body {
     padding: 8px 10px;
     border-radius: 6px;
     cursor: pointer;
-    transition: background 0.2s;
-}
-
-.lesson-item:hover {
-    background: #f1f5f9;
 }
 
 .lesson-item.active {
     background: #ecfdf5;
     color: #00a651;
     font-weight: 600;
-}
-
-.lesson-text p {
-    margin: 0;
-    font-size: 13px;
 }
 
 .status-icon {
@@ -400,13 +345,11 @@ body {
     justify-content: center;
     font-size: 11px;
     margin-right: 8px;
-    flex-shrink: 0;
 }
 
 .status-icon.completed {
     background: #e0f2fe;
     color: #0284c7;
-    font-weight: bold;
 }
 
 .status-icon.play {
@@ -414,7 +357,9 @@ body {
     color: #00a651;
 }
 
-/* MODAL ĐĂNG NHẬP / ĐĂNG KÝ */
+/* ==========================================
+   MODAL ĐĂNG NHẬP / ĐĂNG KÝ
+   ========================================== */
 .modal-overlay {
     display: none;
     position: fixed;
@@ -556,7 +501,9 @@ body {
     display: none !important;
 }
 
-/* ĐƯỜNG KẺ PHÂN CÁCH & NÚT GOOGLE AUTH */
+/* ==========================================
+   ĐƯỜNG KẺ PHÂN CÁCH & NÚT GOOGLE AUTH
+   ========================================== */
 .divider {
     display: flex;
     align-items: center;
